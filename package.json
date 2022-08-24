@@ -1,0 +1,16 @@
+{
+  "name": "dev-press",
+  "version": "0.0.1",
+  "description": "Simple static blog generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "ChessMax",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.7.13",
+    "typescript": "^4.7.4"
+  }
+}
