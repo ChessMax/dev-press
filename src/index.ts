@@ -1,5 +1,7 @@
 ﻿// #!/usr/bin/env node
 
+import {buildCommand} from "./commands/build_command";
+
 const {Command} = require('commander');
 
 const program = new Command()
@@ -8,8 +10,8 @@ const program = new Command()
 
 program
     .command('build', 'Generates static blog')
-    .action(() => {
-        console.log('build');
+    .action(async () => {
+        await buildCommand();
     });
 
 
