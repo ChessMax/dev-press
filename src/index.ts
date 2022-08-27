@@ -1,4 +1,4 @@
-﻿// #!/usr/bin/env node
+﻿#!/usr/bin/env node
 
 import {buildCommand} from "./commands/build_command";
 

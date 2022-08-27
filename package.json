@@ -2,9 +2,13 @@
   "name": "dev-press",
   "version": "0.0.1",
   "description": "Simple static blog generator",
-  "main": "index.js",
+  "main": "./lib/index.js",
+  "bin": {
+    "devpress": "./lib.index.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "ChessMax",
@@ -16,6 +20,7 @@
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/node": "^18.7.13",
+    "ts-node": "^10.9.1",
     "typescript": "^4.7.4"
   }
 }
