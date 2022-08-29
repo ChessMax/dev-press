@@ -3,11 +3,13 @@
 export class AppConfig extends Config {
     title: string;
     author: string;
+    source: Array<string>;
 
-    constructor(title: string, author: string) {
+    constructor(title: string, author: string, source?: Array<string>) {
         super();
         this.title = title;
         this.author = author;
+        this.source = source ?? ['./posts/*.md'];
     }
 
     public static async load(path: string): Promise<AppConfig> {

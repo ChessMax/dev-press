@@ -13,6 +13,11 @@ export async function buildCommand(): Promise<void> {
 
     console.log(`title: ${config.title}`);
     console.log(`author: ${config.author}`);
+    console.log(`source: ${config.source}`);
+
+    let sources = config.source.flatMap((source) => glob.sync(source));
+
+
 
     let mdi = MarkdownIt({
         html: true,

@@ -1,2 +1,6 @@
 ﻿title: Мой Блогъ 2.0
 author: ChessMax
+
+source:
+  ./posts/*.md
+  ./other_posts/*.md
