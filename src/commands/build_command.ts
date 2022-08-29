@@ -2,7 +2,7 @@
 import MarkdownIt from "markdown-it";
 import * as fs from "fs";
 import * as path from 'path'
-import {AppConfig} from "../core/config";
+import {AppConfig} from "../core/app_config";
 
 export async function buildCommand(): Promise<void> {
 
