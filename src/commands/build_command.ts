@@ -2,8 +2,14 @@
 import MarkdownIt from "markdown-it";
 import * as fs from "fs";
 import * as path from 'path'
+import {FrontMatter} from "../core/front_matter";
 
 export async function buildCommand(): Promise<void> {
+
+    let frontMatter = await FrontMatter.load<FrontMatter>('front-matter.yaml');
+
+    console.log(`title: ${frontMatter.title}`);
+
     let mdi = MarkdownIt({
         html: true,
     });

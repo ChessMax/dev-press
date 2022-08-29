@@ -16,10 +16,12 @@
   "dependencies": {
     "commander": "^9.4.0",
     "glob": "^8.0.3",
+    "js-yaml": "^4.1.0",
     "markdown-it": "^13.0.1"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
+    "@types/js-yaml": "^4.0.5",
     "@types/markdown-it": "^12.2.3",
     "@types/node": "^18.7.13",
     "ts-node": "^10.9.1",
