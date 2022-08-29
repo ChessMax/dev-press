@@ -1,5 +1,6 @@
 ﻿import {glob} from "glob";
 import MarkdownIt from "markdown-it";
+import MarkdownItFrontMatter from "markdown-it-front-matter";
 import * as fs from "fs";
 import * as path from 'path'
 import {AppConfig} from "../core/app_config";
@@ -15,6 +16,8 @@ export async function buildCommand(): Promise<void> {
 
     let mdi = MarkdownIt({
         html: true,
+    }).use(MarkdownItFrontMatter, function(fm){
+        console.log(`fm: ${fm}`);
     });
     let mds = glob.sync('./posts/*.md');
     for (const md of mds) {
