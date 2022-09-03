@@ -9,7 +9,7 @@ export async function buildCommand(): Promise<void> {
 
     // let frontMatter = await FrontMatter.load<FrontMatter>('front-matter.yaml');
 
-    let config = await AppConfig.load('_config.yml');
+    let config = await AppConfig.load('/_config.yaml');
 
     console.log(`title: ${config.title}`);
     console.log(`author: ${config.author}`);
@@ -17,7 +17,9 @@ export async function buildCommand(): Promise<void> {
 
     let sources = config.source.flatMap((source) => glob.sync(source));
 
-
+    for (const source of sources) {
+        console.log(`source: ${source}`);
+    }
 
     let mdi = MarkdownIt({
         html: true,

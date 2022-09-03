@@ -2,5 +2,5 @@
 author: ChessMax
 
 source:
-  ./posts/*.md
-  ./other_posts/*.md
+  - ./source/posts/*.md
+  - ./source/other_posts/*.md

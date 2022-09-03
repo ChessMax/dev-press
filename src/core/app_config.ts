@@ -9,7 +9,7 @@ export class AppConfig extends Config {
         super();
         this.title = title;
         this.author = author;
-        this.source = source ?? ['./posts/*.md'];
+        this.source = source ?? ['./source/posts/*.md'];
     }
 
     public static async load(path: string): Promise<AppConfig> {
