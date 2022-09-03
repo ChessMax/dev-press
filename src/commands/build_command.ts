@@ -6,10 +6,16 @@ import * as path from 'path'
 import {AppConfig} from "../core/app_config";
 
 export async function buildCommand(): Promise<void> {
-
     // let frontMatter = await FrontMatter.load<FrontMatter>('front-matter.yaml');
+    let vash = require('vash');
 
-    let config = await AppConfig.load('/_config.yaml');
+    let tpl = vash.compile('<p>I am a @model.t!</p>');
+
+    let out = tpl({ t: 'template' });
+
+    console.log(`out: ${out}`);
+
+    let config = await AppConfig.load('./_config.yaml');
 
     console.log(`title: ${config.title}`);
     console.log(`author: ${config.author}`);
