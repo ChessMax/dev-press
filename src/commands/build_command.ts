@@ -47,7 +47,7 @@ export async function buildCommand(): Promise<void> {
         console.log(`fm: ${fm}`);
     });
 
-    let code = '```js let js = "my-js";';
+    let code = '```js let js = "my-js";```';
     let v = mdi.render(code);
     console.log(`v: ${v}`);
 
