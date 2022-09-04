@@ -12,7 +12,8 @@ export async function buildCommand(): Promise<void> {
     // console.log(html);
 
     // let frontMatter = await FrontMatter.load<FrontMatter>('front-matter.yaml');
-    // let vash = require('vash');
+    let vash = require('vash');
+    vash.config.htmlEscape = false;
     //
     // let tpl = vash.compile('<p>I am a @model.t!</p>');
     //
@@ -38,9 +39,10 @@ export async function buildCommand(): Promise<void> {
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return '<pre class="hljs"><code>' +
-                        hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                        hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
                         '</code></pre>';
-                } catch (__) {}
+                } catch (__) {
+                }
             }
 
             return '<pre class="hljs"><code>' + mdi.utils.escapeHtml(str) + '</code></pre>';
@@ -53,17 +55,29 @@ export async function buildCommand(): Promise<void> {
     // let v = mdi.render(code);
     // console.log(`v: ${v}`);
 
+    let postViewPath = './theme/index.jshtml';
+    let postViewContent = fs.readFileSync(postViewPath, 'utf8');
+    let postHtmlTemplate = vash.compile(postViewContent);
+
     let mds = glob.sync('./source/posts/*.md');
     for (const md of mds) {
         console.log(`md: ${md}`);
 
         let content = fs.readFileSync(md, 'utf8');
-        let html = mdi.render(content);
+        let body = mdi.render(content);
 
         let dir = path.dirname(md);
         let fileName = path.basename(md, '.md');
 
         let htmlPath = path.join(dir, `${fileName}.html`);
+
+        let html = postHtmlTemplate({
+            lang: 'ru',
+            author: 'ChessMax',
+            title: 'Post title',
+            description: 'Blog description',
+            body: body,
+        });
 
         fs.writeFileSync(htmlPath, html);
     }
