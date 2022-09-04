@@ -33,23 +33,39 @@ export async function buildCommand(): Promise<void> {
     //     console.log(`source: ${source}`);
     // }
     //
-    let mdi = MarkdownIt({
+    let mdi: MarkdownIt;
+    mdi = MarkdownIt({
         html: true,
         highlight: function (str, lang) {
+            let code: string | null = null;
             if (lang && hljs.getLanguage(lang)) {
                 try {
-                    return '<pre class="hljs"><code>' +
-                        hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
-                        '</code></pre>';
-                } catch (__) {
+                    code = hljs.highlight(str, {language: lang, ignoreIllegals: true}).value;
+                } catch (_) {
+
                 }
             }
-
-            return '<pre class="hljs"><code>' + mdi.utils.escapeHtml(str) + '</code></pre>';
+            code = code || mdi.utils.escapeHtml(str);
+            return `<pre class="hljs"><code>${code}</code></pre>`;
         }
-    }).use(MarkdownItFrontMatter, function (fm) {
-        console.log(`fm: ${fm}`);
     });
+    // let mdi = MarkdownIt({
+    //     html: true,
+    //     highlight: function (str, lang) {
+    //         if (lang && hljs.getLanguage(lang)) {
+    //             try {
+    //                 return '<pre class="hljs"><code>' +
+    //                     hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
+    //                     '</code></pre>';
+    //             } catch (__) {
+    //             }
+    //         }
+    //
+    //         return '<pre class="hljs"><code>' + mdi.utils.escapeHtml(str) + '</code></pre>';
+    //     }
+    // }).use(MarkdownItFrontMatter, function (fm) {
+    //     console.log(`fm: ${fm}`);
+    // });
     //
     // let code = '```js let js = "my-js";```';
     // let v = mdi.render(code);
