@@ -42,34 +42,18 @@ export async function buildCommand(): Promise<void> {
                 try {
                     code = hljs.highlight(str, {language: lang, ignoreIllegals: true}).value;
                 } catch (_) {
-
                 }
             }
-            code = code || mdi.utils.escapeHtml(str);
+            code ||= mdi.utils.escapeHtml(str);
             return `<pre class="hljs"><code>${code}</code></pre>`;
         }
+    }).use(MarkdownItFrontMatter, function (fm) {
+        console.log(`fm: ${fm}`);
     });
-    // let mdi = MarkdownIt({
-    //     html: true,
-    //     highlight: function (str, lang) {
-    //         if (lang && hljs.getLanguage(lang)) {
-    //             try {
-    //                 return '<pre class="hljs"><code>' +
-    //                     hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
-    //                     '</code></pre>';
-    //             } catch (__) {
-    //             }
-    //         }
-    //
-    //         return '<pre class="hljs"><code>' + mdi.utils.escapeHtml(str) + '</code></pre>';
-    //     }
-    // }).use(MarkdownItFrontMatter, function (fm) {
-    //     console.log(`fm: ${fm}`);
-    // });
-    //
-    // let code = '```js let js = "my-js";```';
-    // let v = mdi.render(code);
-    // console.log(`v: ${v}`);
+
+    let code = '```js let js = "my-js";```';
+    let v = mdi.render(code);
+    console.log(`v: ${v}`);
 
     let postViewPath = './theme/index.jshtml';
     let postViewContent = fs.readFileSync(postViewPath, 'utf8');
