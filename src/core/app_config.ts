@@ -1,18 +1,13 @@
 ﻿import {Config} from "./config";
 
-export class AppConfig extends Config {
-    title: string;
-    author: string;
-    source: Array<string>;
-
-    constructor(title: string, author: string, source?: Array<string>) {
-        super();
-        this.title = title;
-        this.author = author;
-        this.source = source ?? ['./source/posts/*.md'];
-    }
+export abstract class AppConfig extends Config {
+    abstract title: string;
+    abstract author: string;
+    abstract output: string;
+    abstract source: Array<string>;
 
     public static async load(path: string): Promise<AppConfig> {
+        // TODO: default values
         return this.loadConfig<AppConfig>(path);
     }
 }

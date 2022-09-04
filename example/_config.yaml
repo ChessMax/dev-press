@@ -1,5 +1,6 @@
 ﻿title: Мой Блогъ 2.0
 author: ChessMax
+output: ./public
 
 source:
   - ./source/posts/*.md

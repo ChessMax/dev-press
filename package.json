@@ -14,12 +14,14 @@
   "author": "ChessMax",
   "license": "MIT",
   "dependencies": {
+    "@types/rimraf": "^3.0.2",
     "commander": "^9.4.0",
     "glob": "^8.0.3",
     "highlight.js": "^11.6.0",
     "js-yaml": "^4.1.0",
     "markdown-it": "^13.0.1",
     "markdown-it-front-matter": "^0.2.3",
+    "rimraf": "^3.0.2",
     "vash": "^0.13.0"
   },
   "devDependencies": {
