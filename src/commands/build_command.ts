@@ -5,15 +5,12 @@ import * as fs from "fs";
 import * as path from 'path'
 import {AppConfig} from "../core/app_config";
 import hljs from 'highlight.js';
-import {Config} from "../core/config";
 import rimraf from 'rimraf';
 
 export async function buildCommand(): Promise<void> {
+    let packageDir = __dirname;
+    console.log(`packageDir: ${packageDir}`);
 
-    // let html = hljs.highlight("<span>Hello World!</span>", {language: "html"}).value;
-    // console.log(html);
-
-    // let frontMatter = await FrontMatter.load<FrontMatter>('front-matter.yaml');
     let vash = require('vash');
     vash.config.htmlEscape = false;
 
@@ -32,7 +29,7 @@ export async function buildCommand(): Promise<void> {
     // for (const source of sources) {
     //     console.log(`source: ${source}`);
     // }
-    //
+
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
         html: true,
