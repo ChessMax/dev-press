@@ -12,46 +12,48 @@ export async function buildCommand(): Promise<void> {
     // console.log(html);
 
     // let frontMatter = await FrontMatter.load<FrontMatter>('front-matter.yaml');
-    let vash = require('vash');
-
-    let tpl = vash.compile('<p>I am a @model.t!</p>');
-
-    let out = tpl({t: 'template'});
-
-    console.log(`out: ${out}`);
-
-    let config = await AppConfig.load('./_config.yaml');
-
-    console.log(`title: ${config.title}`);
-    console.log(`author: ${config.author}`);
-    console.log(`source: ${config.source}`);
-
-    let sources = config.source.flatMap((source) => glob.sync(source));
-
-    for (const source of sources) {
-        console.log(`source: ${source}`);
-    }
-
+    // let vash = require('vash');
+    //
+    // let tpl = vash.compile('<p>I am a @model.t!</p>');
+    //
+    // let out = tpl({t: 'template'});
+    //
+    // console.log(`out: ${out}`);
+    //
+    // let config = await AppConfig.load('./_config.yaml');
+    //
+    // console.log(`title: ${config.title}`);
+    // console.log(`author: ${config.author}`);
+    // console.log(`source: ${config.source}`);
+    //
+    // let sources = config.source.flatMap((source) => glob.sync(source));
+    //
+    // for (const source of sources) {
+    //     console.log(`source: ${source}`);
+    // }
+    //
     let mdi = MarkdownIt({
         html: true,
-        highlight: function (str, lang ) {
+        highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
-                    return hljs.highlight(str, { language: lang }).value;
+                    return '<pre class="hljs"><code>' +
+                        hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                        '</code></pre>';
                 } catch (__) {}
             }
 
-            return ''; // use external default escaping
+            return '<pre class="hljs"><code>' + mdi.utils.escapeHtml(str) + '</code></pre>';
         }
     }).use(MarkdownItFrontMatter, function (fm) {
         console.log(`fm: ${fm}`);
     });
+    //
+    // let code = '```js let js = "my-js";```';
+    // let v = mdi.render(code);
+    // console.log(`v: ${v}`);
 
-    let code = '```js let js = "my-js";```';
-    let v = mdi.render(code);
-    console.log(`v: ${v}`);
-
-    let mds = glob.sync('./posts/*.md');
+    let mds = glob.sync('./source/posts/*.md');
     for (const md of mds) {
         console.log(`md: ${md}`);
 
