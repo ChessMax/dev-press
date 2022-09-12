@@ -1,5 +1,10 @@
 ﻿:root {
-    --brand-color: #7d2ae8;
+    --primary-color: #7d2ae8;
+    --secondary-color: #999;
+    --text-color: #555;
+    --on-primary-color: white;
+    --selection-color: black;
+    --selection-bg-color: #e9d3fb;
 }
 
 * {
@@ -12,11 +17,22 @@ html {
 
 body {
     margin: 0;
+    font-size: 1em;
+    line-height: 2;
+    color: var(--text-color);
 }
 
 h2 {
-    padding-bottom: 0;
+    margin-bottom: 0;
+}
 
+a {
+    color: var(--primary-color);
+}
+
+::selection {
+    color: var(--selection-color);
+    background-color: var(--selection-bg-color);
 }
 
 main article header {
@@ -61,14 +77,11 @@ nav a {
 }
 
 nav a:hover, .nav-a-current {
-    background-color: var(--brand-color);
+    background-color: var(--primary-color);
 }
 
 main {
-    top: 16px;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 0;
+    padding: 16px 16px 0;
 }
 
 footer {
@@ -78,7 +91,7 @@ footer {
 }
 
 .post-meta {
-    color: #999;
+    color: var(--secondary-color);
     font-size: 0.75em;
     margin: 4px 0 4px 0;
     text-align: center;
@@ -91,6 +104,11 @@ footer {
 .post-meta .post-meta-item + .post-meta-item::before {
     content: '|';
     margin: 0 0.5em;
+}
+
+.post-body {
+    text-align: justify;
+    word-wrap: break-word;
 }
 
 /*div {
@@ -109,6 +127,20 @@ footer {
     width: 75%;
     float: left;
     border: 1px solid red;
+}
+
+body footer {
+    text-align: center;
+    font-size: 0.875em;
+    color: var(--secondary-color);
+    gap: 10px;
+    padding-bottom: 16px;
+    line-height: 2;
+}
+
+.with-love {
+    color: var(--primary-color);
+    margin-left: 5px;
 }
 
 /* For mobile phones: */
