@@ -5,14 +5,11 @@
     --on-primary-color: white;
     --selection-color: black;
     --selection-bg-color: #e9d3fb;
+    font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 * {
     box-sizing: border-box;
-}
-
-html {
-    font-family: 'Lato', "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 body {
@@ -58,9 +55,9 @@ nav > * {
     padding: 10px 16px;
     vertical-align: middle;
     text-align: center;
-    font-size: 17px;
+    font-size: 18px;
+    font-weight: bold;
     line-height: 1.4;
-    font-family: 'Source Sans Pro', sans-serif;
     text-transform: uppercase;
 }
 
