@@ -48,7 +48,7 @@ export async function buildCommand(): Promise<void> {
         console.log(`fm: ${fm}`);
     });
 
-    let postViewPath = './theme/index.jshtml';
+    let postViewPath = './theme/index.vash';
     let postViewContent = fs.readFileSync(postViewPath, 'utf8');
     let postHtmlTemplate = vash.compile(postViewContent);
 

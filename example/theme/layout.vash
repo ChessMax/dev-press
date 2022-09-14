@@ -1,0 +1,46 @@
+﻿@{
+  var author = model.author;
+}
+
+<!doctype html>
+<html lang="@model.lang">
+  <head>
+    <meta charset="utf-8">
+    <meta name="author" content="@author.name">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="@model.description">
+
+    <title>@model.title</title>
+
+    <link rel="stylesheet" type="text/css" href="index.css">
+
+    <!--TODO: download icons -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  </head>
+  <body>
+
+    <header>
+      <nav>
+        <a title="Home" href="/"><i class="fa-solid fa-code"></i></a>
+        <div>@model.title</div>
+        <a title="About" href="about.html"><i class="fa fa-user fa-fw"></i></a>
+        <a href="@author.github" title="Follow me on GitHub"
+           aria-label="Follow me on GitHub" rel="noopener" target="_blank">
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      @html.block('content')
+    </main>
+    <footer>
+      <span>© 2011 – 2022</span>
+      <span class="with-love">
+            <i class="fa fa-heart"></i>
+            <span>@author.name</span>
+        </span>
+    </footer>
+  </body>
+</html>
