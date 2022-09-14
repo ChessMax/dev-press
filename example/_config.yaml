@@ -1,5 +1,7 @@
 ﻿title: Мой Блогъ 2.0
-author: ChessMax
+author:
+  name: ChessMax
+  github: https://github.com/ChessMax
 output: ./public
 
 source:

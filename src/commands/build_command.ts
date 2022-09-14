@@ -66,14 +66,19 @@ export async function buildCommand(): Promise<void> {
         let htmlPath = path.join(outputDir, `${fileName}.html`);
 
         let html = postHtmlTemplate({
+            author: {
+                name: 'ChessMax',
+                github: 'https://github.com/ChessMax',
+            },
             lang: 'ru',
-            author: 'ChessMax',
             title: 'Post title',
             description: 'Blog description',
             body: body,
         });
 
         fs.writeFileSync(htmlPath, html);
+
+        fs.copyFileSync('./theme/index.css', path.join(outputDir, 'index.css'));
     }
 }
 
