@@ -11,13 +11,10 @@ export async function buildCommand(): Promise<void> {
     let packageDir = __dirname;
     console.log(`packageDir: ${packageDir}`);
 
-    let vash = require('vash');
-    vash.config.htmlEscape = false;
-
     let config = await AppConfig.load('./_config.yaml');
 
     rimraf.sync(config.output);
-    await fs.promises.mkdir(config.output, { recursive: true });
+    await fs.promises.mkdir(config.output, {recursive: true});
 
     console.log(`title: ${config.title}`);
     console.log(`author: ${config.author}`);
@@ -49,8 +46,18 @@ export async function buildCommand(): Promise<void> {
     });
 
     let postViewPath = './theme/index.vash';
+    let layoutViewPath = './theme/layout.vash';
+    let layoutViewContent = fs.readFileSync(layoutViewPath, 'utf8');
     let postViewContent = fs.readFileSync(postViewPath, 'utf8');
-    let postHtmlTemplate = vash.compile(postViewContent);
+
+    let vash = require('vash');
+    vash.config.htmlEscape = false;
+    vash.config.settings = {
+        views: path.join(process.cwd(), './theme'),
+    };
+    let l = vash.install('layout', layoutViewContent);
+    let i = vash.install('index', postViewContent);
+    let postHtmlTemplate = vash.lookup('index');// vash.compile(postViewContent);
 
     let outputDir = config.output;
 
@@ -65,20 +72,26 @@ export async function buildCommand(): Promise<void> {
 
         let htmlPath = path.join(outputDir, `${fileName}.html`);
 
-        let html = postHtmlTemplate({
+        postHtmlTemplate({
             author: {
                 name: 'ChessMax',
                 github: 'https://github.com/ChessMax',
             },
             lang: 'ru',
-            title: 'Post title',
-            description: 'Blog description',
-            body: body,
+            posts: [{
+                title: 'Post title',
+                content: body,
+                description: 'Blog description',
+            },
+            ],
+        }, (_: any, ctx: { finishLayout: () => String; }) => {
+            let html = ctx.finishLayout();
+            fs.writeFileSync(htmlPath, html);
+
+            fs.copyFileSync('./theme/index.css', path.join(outputDir, 'index.css'));
         });
 
-        fs.writeFileSync(htmlPath, html);
 
-        fs.copyFileSync('./theme/index.css', path.join(outputDir, 'index.css'));
     }
 }
 
