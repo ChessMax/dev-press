@@ -2,10 +2,14 @@
 import MarkdownIt from "markdown-it";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
 import * as fs from "fs";
+import * as fse from "fs-extra";
 import * as path from 'path'
 import {AppConfig} from "../core/app_config";
 import hljs from 'highlight.js';
 import rimraf from 'rimraf';
+import {getTemplate} from "../view/vash/vash_view";
+import {Author, Site} from "../post/post";
+
 
 export async function buildCommand(): Promise<void> {
     let packageDir = __dirname;
@@ -14,7 +18,7 @@ export async function buildCommand(): Promise<void> {
     let config = await AppConfig.load('./_config.yaml');
 
     rimraf.sync(config.output);
-    await fs.promises.mkdir(config.output, {recursive: true});
+    await fse.promises.mkdir(config.output, {recursive: true});
 
     console.log(`title: ${config.title}`);
     console.log(`author: ${config.author}`);
@@ -45,59 +49,58 @@ export async function buildCommand(): Promise<void> {
         console.log(`fm: ${fm}`);
     });
 
-    let postViewPath = './theme/index.vash';
-    let layoutViewPath = './theme/layout.vash';
-    let layoutViewContent = fs.readFileSync(layoutViewPath, 'utf8');
-    let postViewContent = fs.readFileSync(postViewPath, 'utf8');
-
-    let vash = require('vash');
-    vash.config.htmlEscape = false;
-    vash.config.settings = {
-        views: path.join(process.cwd(), './theme'),
-    };
-    let l = vash.install('layout', layoutViewContent);
-    let i = vash.install('index', postViewContent);
-    let postHtmlTemplate = vash.lookup('index');// vash.compile(postViewContent);
+    let indexTemplate = await getTemplate<Site>('index');
 
     let outputDir = config.output;
-
     let mds = glob.sync('./source/posts/*.md');
     for (const md of mds) {
         console.log(`md: ${md}`);
 
-        let content = fs.readFileSync(md, 'utf8');
+        let content = fse.readFileSync(md, 'utf8');
         let body = mdi.render(content);
 
         let fileName = path.basename(md, '.md');
 
         let htmlPath = path.join(outputDir, `${fileName}.html`);
 
-        postHtmlTemplate({
-            author: {
-                name: 'ChessMax',
-                github: 'https://github.com/ChessMax',
-            },
+        let author: Author = {
+            name: 'ChessMax',
+            github: 'https://github.com/ChessMax',
+        };
+
+        let html = await indexTemplate.render({
+            owner: author,
             lang: 'ru',
             title: 'Мой Блогъ 2.0',
-            posts: [{
-                title: 'Post title',
-                content: body,
-                description: 'Blog description',
-            },
+            created: new Date(2011),
+            description: 'Blog description',
+            posts: [
                 {
+                    author: author,
+                    title: 'Post title',
+                    content: body,
+                    description: 'Post description',
+                    created: new Date(),
+                },
+                {
+                    author: author,
                     title: 'Post title2',
                     content: body,
-                    description: 'Blog description',
+                    description: 'Post description 2',
+                    created: new Date(),
                 },
             ],
-        }, (_: any, ctx: { finishLayout: () => String; }) => {
-            let html = ctx.finishLayout();
-            fs.writeFileSync(htmlPath, html);
-
-            fs.copyFileSync('./theme/index.css', path.join(outputDir, 'index.css'));
         });
 
+        fse.writeFileSync(htmlPath, html);
+
+        // fs.cp('./theme/css', outputDir);
+
+        // await fse.copyFile('./theme/css', outputDir);
 
     }
+
+    await fse.emptydir(path.join(outputDir, 'css'));
+    fs.copyFileSync('./theme/index.css', path.join(outputDir, 'css', 'index.css'));
 }
 

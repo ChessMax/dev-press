@@ -1,16 +1,17 @@
 ﻿@{
-  var author = model.author;
+  var site = model;
+  var author = site.author;
 }<!doctype html>
-<html lang="@model.lang">
+<html lang="@site.lang">
   <head>
     <meta charset="utf-8">
     <meta name="author" content="@author.name">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="@model.description">
+    <meta name="description" content="@site.description">
 
     <title>@model.title</title>
 
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
 
     <!--TODO: download icons -->
     <link rel="stylesheet" type="text/css"

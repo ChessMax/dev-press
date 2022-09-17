@@ -14,8 +14,10 @@
   "author": "ChessMax",
   "license": "MIT",
   "dependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/rimraf": "^3.0.2",
     "commander": "^9.4.0",
+    "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "highlight.js": "^11.6.0",
     "js-yaml": "^4.1.0",
