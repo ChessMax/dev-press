@@ -28,7 +28,8 @@ a {
 }
 
 ::selection {
-    color: var(--selection-color);
+    /*color: var(--selection-color);*/
+    color: var(--primary-color);
     background-color: var(--selection-bg-color);
 }
 

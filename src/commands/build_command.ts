@@ -83,6 +83,11 @@ export async function buildCommand(): Promise<void> {
                 content: body,
                 description: 'Blog description',
             },
+                {
+                    title: 'Post title2',
+                    content: body,
+                    description: 'Blog description',
+                },
             ],
         }, (_: any, ctx: { finishLayout: () => String; }) => {
             let html = ctx.finishLayout();
