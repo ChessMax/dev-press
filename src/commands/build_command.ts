@@ -78,6 +78,7 @@ export async function buildCommand(): Promise<void> {
                 github: 'https://github.com/ChessMax',
             },
             lang: 'ru',
+            title: 'Мой Блогъ 2.0',
             posts: [{
                 title: 'Post title',
                 content: body,
