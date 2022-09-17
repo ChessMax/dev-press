@@ -68,11 +68,11 @@ export async function buildCommand(): Promise<void> {
             github: 'https://github.com/ChessMax',
         };
 
-        let html = await indexTemplate.render({
-            owner: author,
+        let site = {
+            author: author,
             lang: 'ru',
             title: 'Мой Блогъ 2.0',
-            created: new Date(2011),
+            created: new Date(2011, 1),
             description: 'Blog description',
             posts: [
                 {
@@ -90,7 +90,9 @@ export async function buildCommand(): Promise<void> {
                     created: new Date(),
                 },
             ],
-        });
+        };
+
+        let html = await indexTemplate.render(site);
 
         fse.writeFileSync(htmlPath, html);
 

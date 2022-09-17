@@ -19,6 +19,7 @@ export async function getTemplate<T>(name: string): Promise<Template<T>> {
     vash.config.settings = {
         views: path.join(process.cwd(), './theme'),
     };
+    vash.helpers.echo = (arg: any) => arg.toString();
 
     vash.install('layout', layoutViewContent);
     vash.install('index', postViewContent);

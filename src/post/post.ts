@@ -5,8 +5,8 @@ export interface Site {
     title: string;
     posts: Array<Post>;
     created: Date;
+    author: Author;
     description?: string;
-    owner: Author;
 }
 
 export interface Author {
