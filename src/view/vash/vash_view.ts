@@ -36,7 +36,6 @@ class VashViewTemplate<T> implements Template<T> {
     }
 
     render(model: T): Promise<string> {
-        // return Promise.resolve("");
         return new Promise(async (resolve, reject) => {
             try {
                 this.template(model, (_, ctx) => {
