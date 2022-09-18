@@ -3,7 +3,7 @@
 }
 <article>
   <header>
-    <h2><a>@model.title</a></h2>
+    <h2><a href="@post.url">@model.title</a></h2>
     <div class="post-meta">
             <span class="post-meta-item">
                 <i class="fa-regular fa-calendar"></i>
@@ -21,7 +21,12 @@
   </header>
 
   <div class="post-body">
-    @model.content
+    @if (post.excerpt) {
+      @post.excerpt
+    }
+    @if (!post.isIndex) {
+      @post.content
+    }
   </div>
   <footer>
 

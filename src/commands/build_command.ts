@@ -8,7 +8,8 @@ import {AppConfig} from "../core/app_config";
 import hljs from 'highlight.js';
 import rimraf from 'rimraf';
 import {getTemplate} from "../view/vash/vash_view";
-import {Author, Site} from "../post/post";
+import {Author, Post, Site} from "../post/post";
+import {PostViewModel} from "../view/post_view_model";
 
 
 export async function buildCommand(): Promise<void> {
@@ -24,12 +25,6 @@ export async function buildCommand(): Promise<void> {
     console.log(`author: ${config.author}`);
     console.log(`source: ${config.source}`);
     console.log(`output: ${config.output}`);
-
-    // let sources = config.source.flatMap((source) => glob.sync(source));
-    //
-    // for (const source of sources) {
-    //     console.log(`source: ${source}`);
-    // }
 
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
@@ -49,7 +44,20 @@ export async function buildCommand(): Promise<void> {
         console.log(`fm: ${fm}`);
     });
 
-    let indexTemplate = await getTemplate<Site>('index');
+
+    let author: Author = {
+        name: 'ChessMax',
+        github: 'https://github.com/ChessMax',
+    };
+    let site: Site = {
+        author: author,
+        lang: 'ru',
+        title: 'Мой Блогъ 2.0',
+        created: new Date(2011, 1),
+        description: 'Blog description',
+        posts: []
+    };
+    let posts = site.posts;
 
     let outputDir = config.output;
     let mds = glob.sync('./source/posts/*.md');
@@ -59,50 +67,69 @@ export async function buildCommand(): Promise<void> {
         let content = fse.readFileSync(md, 'utf8');
         let body = mdi.render(content);
 
+        let r = replaceMore(body);
+        let excerpt = r.excerpt;
+        body = r.content;
+
         let fileName = path.basename(md, '.md');
+        let postPath = path.join(`/posts/${fileName}`);
+        let postUrl = path.join(`/posts/${fileName}.html`);
 
-        let htmlPath = path.join(outputDir, `${fileName}.html`);
-
-        let author: Author = {
-            name: 'ChessMax',
-            github: 'https://github.com/ChessMax',
-        };
-
-        let site = {
-            author: author,
-            lang: 'ru',
-            title: 'Мой Блогъ 2.0',
-            created: new Date(2011, 1),
-            description: 'Blog description',
-            posts: [
-                {
-                    author: author,
-                    title: 'Post title',
-                    content: body,
-                    description: 'Post description',
-                    created: new Date(),
-                },
-                {
-                    author: author,
-                    title: 'Post title2',
-                    content: body,
-                    description: 'Post description 2',
-                    created: new Date(),
-                },
-            ],
-        };
-
-        let html = await indexTemplate.render(site);
-
-        fse.writeFileSync(htmlPath, html);
-
-        // fs.cp('./theme/css', outputDir);
-
-        // await fse.copyFile('./theme/css', outputDir);
-
+        posts.push({
+                url: postUrl,
+                path: postPath,
+                author: author,
+                title: 'Post title',
+                excerpt: excerpt,
+                content: body,
+                description: 'Post description',
+                created: new Date(),
+            }
+        );
     }
 
     await fse.emptydir(path.join(outputDir, 'css'));
-    fs.copyFileSync('./theme/index.css', path.join(outputDir, 'css', 'index.css'));
+    fs.copyFileSync('./theme/css/index.css', path.join(outputDir, 'css', 'index.css'));
+
+    let indexTemplate = await getTemplate<Site>('index');
+    let html = await indexTemplate.render(site);
+    let htmlPath = path.join(outputDir, 'index.html');
+    fse.outputFileSync(htmlPath, html);
+
+    let postTemplate = await getTemplate<Site>('post');
+
+    for (let post of posts) {
+        site.post = post;
+        let postHtml = await postTemplate.render(site);
+        let postPath = path.join(outputDir, `${post.path}.html`);
+        fse.outputFileSync(postPath, postHtml);
+    }
+}
+
+// TODO: make plugin?
+function replaceMore(content: string): {
+    excerpt: string,
+    content: string
+} {
+    let excerpt: string = '';
+    let more: string = content;
+    const rExcerpt = /<!-- ?more ?-->/i;
+
+    if (rExcerpt.test(content)) {
+        content = content.replace(rExcerpt, (match, index) => {
+            excerpt = content.substring(0, index).trim();
+            more = content.substring(index + match.length).trim();
+
+            return '<span id="more">далее...</span>';
+        });
+    }
+
+    // console.log(`excerpt: ${excerpt}`);
+    // console.log(`more: ${more}`);
+
+    return {
+        excerpt: excerpt,
+        content: more,
+    };
 }
 

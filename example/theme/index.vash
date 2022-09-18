@@ -1,6 +1,7 @@
 ﻿@html.extend('layout', function(model){
   @html.block('content', function(model){
     @model.posts.forEach(function(model){
+      model.isIndex = true;
       @html.include('includes/post', model)
     })
   })

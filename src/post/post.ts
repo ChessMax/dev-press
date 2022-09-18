@@ -1,8 +1,10 @@
-﻿type Html = String;
+﻿type Url = string;
+type Html = String;
 
 export interface Site {
     lang: string;
     title: string;
+    post?:Post;
     posts: Array<Post>;
     created: Date;
     author: Author;
@@ -15,8 +17,11 @@ export interface Author {
 }
 
 export interface Post {
+    url: string;
+    path: Url;
     title: string;
     author?: Author;
+    excerpt?: Html;
     content: Html;
     summary?: Html;
     created: Date;

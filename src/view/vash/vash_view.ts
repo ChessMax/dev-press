@@ -7,24 +7,28 @@ type VashTemplate = (model: any, onRenderEnd: VashOnRenderEnd) => void;
 
 // type VashTemplate = (model: any, (_: any, ctx: { finishLayout: () => string; })) => void;// => template(model, (_: any, ctx: { finishLayout: () => string; }) =>
 
-
 export async function getTemplate<T>(name: string): Promise<Template<T>> {
-    let postViewPath = './theme/index.vash';
-    let layoutViewPath = './theme/layout.vash';
-    let layoutViewContent = fse.readFileSync(layoutViewPath, 'utf8');
-    let postViewContent = fse.readFileSync(postViewPath, 'utf8');
-
     let vash = require('vash');
     vash.config.htmlEscape = false;
     vash.config.settings = {
         views: path.join(process.cwd(), './theme'),
     };
     vash.helpers.echo = (arg: any) => arg.toString();
+    vash.helpers.logo = (arg: any) => console.log(arg);
 
-    vash.install('layout', layoutViewContent);
-    vash.install('index', postViewContent);
+    let paths = [
+        './theme/post.vash',
+        './theme/index.vash',
+        './theme/layout.vash',
+    ];
 
-    let template = vash.lookup('index');
+    for (let viewPath of paths) {
+        let viewContent = fse.readFileSync(viewPath, 'utf8');
+        let viewName = path.basename(viewPath, '.vash');
+        vash.install(viewName, viewContent);
+    }
+
+    let template = vash.lookup(name);
     return new VashViewTemplate<T>(template);
 }
 
