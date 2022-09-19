@@ -10,6 +10,8 @@ import rimraf from 'rimraf';
 import {getTemplate} from "../view/vash/vash_view";
 import {Author, Post, Site} from "../post/post";
 import {PostViewModel} from "../view/post_view_model";
+import markdownItPrism from "markdown-it-prism";
+import MarkdownItShiki from "markdown-it-shiki";
 
 
 export async function buildCommand(): Promise<void> {
@@ -26,24 +28,15 @@ export async function buildCommand(): Promise<void> {
     console.log(`source: ${config.source}`);
     console.log(`output: ${config.output}`);
 
-    let baseUrl = '/dev-press/';// '/dev-press/example/public/';
+    let baseUrl = '/dev-press/';
 
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
         html: true,
-        highlight: function (str, lang) {
-            let code: string | null = null;
-            if (lang && hljs.getLanguage(lang)) {
-                try {
-                    code = hljs.highlight(str, {language: lang, ignoreIllegals: true}).value;
-                } catch (_) {
-                }
-            }
-            code ||= mdi.utils.escapeHtml(str);
-            return `<pre class="hljs"><code>${code}</code></pre>`;
-        }
     }).use(MarkdownItFrontMatter, function (fm) {
         console.log(`fm: ${fm}`);
+    }).use(MarkdownItShiki, {
+        theme: 'github-light'
     });
 
     let author: Author = {
@@ -101,6 +94,7 @@ export async function buildCommand(): Promise<void> {
 
     for (let post of posts) {
         site.post = post;
+        post.isIndex = false;
         let postHtml = await postTemplate.render(site);
         let postPath = path.join(outputDir, `${post.path}.html`);
         fse.outputFileSync(postPath, postHtml);
