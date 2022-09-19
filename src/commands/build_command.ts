@@ -26,6 +26,8 @@ export async function buildCommand(): Promise<void> {
     console.log(`source: ${config.source}`);
     console.log(`output: ${config.output}`);
 
+    let baseUrl = '/dev-press/';// '/dev-press/example/public/';
+
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
         html: true,
@@ -43,7 +45,6 @@ export async function buildCommand(): Promise<void> {
     }).use(MarkdownItFrontMatter, function (fm) {
         console.log(`fm: ${fm}`);
     });
-
 
     let author: Author = {
         name: 'ChessMax',
@@ -73,7 +74,7 @@ export async function buildCommand(): Promise<void> {
 
         let fileName = path.basename(md, '.md');
         let postPath = path.join(`/posts/${fileName}`);
-        let postUrl = path.join(`/posts/${fileName}.html`);
+        let postUrl = path.join(baseUrl, `/posts/${fileName}.html`);
 
         posts.push({
                 url: postUrl,
