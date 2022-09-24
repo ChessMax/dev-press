@@ -1,17 +1,14 @@
-﻿import path from "path";
-import * as fse from "fs-extra";
-import {Template} from "../template";
+﻿import {Template} from "../template";
+import {FileSystem} from "../../fs/file_system";
 
 type VashOnRenderEnd = (err: any, ctx: { finishLayout: () => string; }) => void;
 type VashTemplate = (model: any, onRenderEnd: VashOnRenderEnd) => void;
 
-// type VashTemplate = (model: any, (_: any, ctx: { finishLayout: () => string; })) => void;// => template(model, (_: any, ctx: { finishLayout: () => string; }) =>
-
-export async function getTemplate<T>(name: string): Promise<Template<T>> {
+export async function getTemplate<T>(myFs:FileSystem, name: string): Promise<Template<T>> {
     let vash = require('vash');
     vash.config.htmlEscape = false;
     vash.config.settings = {
-        views: path.join(process.cwd(), './theme'),
+        views: myFs.join(myFs.getCurrentWorkingDir(), './theme'),
     };
     vash.helpers.echo = (arg: any) => arg.toString();
     vash.helpers.logo = (arg: any) => console.log(arg);
@@ -23,8 +20,8 @@ export async function getTemplate<T>(name: string): Promise<Template<T>> {
     ];
 
     for (let viewPath of paths) {
-        let viewContent = fse.readFileSync(viewPath, 'utf8');
-        let viewName = path.basename(viewPath, '.vash');
+        let viewContent = await myFs.readTextFile(viewPath);
+        let viewName = myFs.getBaseName(viewPath, '.vash');
         vash.install(viewName, viewContent);
     }
 

@@ -6,12 +6,16 @@ import {DirectoryPath, FileExt, FileName, FilePath, FileSystem} from "./file_sys
 export class AppFileSystem implements FileSystem {
     private encoding = 'utf8';
 
-    getGlob(pattern: string): Promise<FilePath[]> {
-        return Promise.resolve(glob.sync(pattern));
+    getCurrentWorkingDir(): string {
+        return process.cwd();
     }
 
     getPackageDir(): DirectoryPath {
         return __dirname;
+    }
+
+    getGlob(pattern: string): Promise<FilePath[]> {
+        return Promise.resolve(glob.sync(pattern));
     }
 
     async readTextFile(path: FilePath): Promise<string> {

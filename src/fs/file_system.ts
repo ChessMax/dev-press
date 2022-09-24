@@ -4,6 +4,7 @@ export type FilePath = string;
 export type DirectoryPath = string;
 
 export interface FileSystem {
+    getCurrentWorkingDir():DirectoryPath;
     join(...paths: string[]): FilePath;
     getBaseName(path: FilePath, ext?: FileExt):FileName;
     getGlob(pattern: string):Promise<FilePath[]>;

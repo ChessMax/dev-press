@@ -79,12 +79,12 @@ export async function buildCommand(): Promise<void> {
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
 
-    let indexTemplate = await getTemplate<Site>('index');
+    let indexTemplate = await getTemplate<Site>(fs, 'index');
     let html = await indexTemplate.render(site);
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);
 
-    let postTemplate = await getTemplate<Site>('post');
+    let postTemplate = await getTemplate<Site>(fs, 'post');
 
     for (let post of posts) {
         site.post = post;
