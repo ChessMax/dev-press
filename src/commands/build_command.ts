@@ -5,7 +5,6 @@ import * as fs from "fs";
 import * as fse from "fs-extra";
 import * as path from 'path'
 import {AppConfig} from "../core/app_config";
-import hljs from 'highlight.js';
 import rimraf from 'rimraf';
 import {getTemplate} from "../view/vash/vash_view";
 import {Author, Post, Site} from "../post/post";
