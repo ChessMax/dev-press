@@ -1,25 +1,21 @@
-﻿import {glob} from "glob";
-import MarkdownIt from "markdown-it";
+﻿import MarkdownIt from "markdown-it";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
-import * as fs from "fs";
-import * as fse from "fs-extra";
-import * as path from 'path'
 import {AppConfig} from "../core/app_config";
-import rimraf from 'rimraf';
 import {getTemplate} from "../view/vash/vash_view";
 import {Author, Post, Site} from "../post/post";
 import {PostViewModel} from "../view/post_view_model";
 import MarkdownItShiki from "markdown-it-shiki";
-
+import {AppFileSystem} from "../fs/app_file_system";
 
 export async function buildCommand(): Promise<void> {
-    let packageDir = __dirname;
+    let myFs = new AppFileSystem();
+    let packageDir = myFs.getPackageDir();
     console.log(`packageDir: ${packageDir}`);
 
-    let config = await AppConfig.load('./_config.yaml');
+    let config = await AppConfig.load(myFs, './_config.yaml');
 
-    rimraf.sync(config.output);
-    await fse.promises.mkdir(config.output, {recursive: true});
+    await myFs.removeDirRecursive(config.output);
+    await myFs.makeDirRecursive(config.output);
 
     console.log(`title: ${config.title}`);
     console.log(`author: ${config.author}`);
@@ -52,20 +48,20 @@ export async function buildCommand(): Promise<void> {
     let posts = site.posts;
 
     let outputDir = config.output;
-    let mds = glob.sync('./source/posts/*.md');
+    let mds = await myFs.getGlob('./source/posts/*.md');
     for (const md of mds) {
         console.log(`md: ${md}`);
 
-        let content = fse.readFileSync(md, 'utf8');
+        let content = await myFs.readTextFile(md);
         let body = mdi.render(content);
 
         let r = replaceMore(body);
         let excerpt = r.excerpt;
         body = r.content;
 
-        let fileName = path.basename(md, '.md');
-        let postPath = path.join(`/posts/${fileName}`);
-        let postUrl = path.join(baseUrl, `/posts/${fileName}.html`);
+        let fileName = myFs.getBaseName(md, '.md');
+        let postPath = myFs.join(`/posts/${fileName}`);
+        let postUrl = myFs.join(baseUrl, `/posts/${fileName}.html`);
 
         posts.push({
                 url: postUrl,
@@ -80,13 +76,14 @@ export async function buildCommand(): Promise<void> {
         );
     }
 
-    await fse.emptydir(path.join(outputDir, 'css'));
-    fs.copyFileSync('./theme/css/index.css', path.join(outputDir, 'css', 'index.css'));
+    await myFs.makeDirRecursive(myFs.join(outputDir, 'css'));
+    await myFs.copyFile('./theme/css/index.css',
+        myFs.join(outputDir, 'css', 'index.css'));
 
     let indexTemplate = await getTemplate<Site>('index');
     let html = await indexTemplate.render(site);
-    let htmlPath = path.join(outputDir, 'index.html');
-    fse.outputFileSync(htmlPath, html);
+    let htmlPath = myFs.join(outputDir, 'index.html');
+    await myFs.writeTextFile(htmlPath, html);
 
     let postTemplate = await getTemplate<Site>('post');
 
@@ -94,8 +91,8 @@ export async function buildCommand(): Promise<void> {
         site.post = post;
         post.isIndex = false;
         let postHtml = await postTemplate.render(site);
-        let postPath = path.join(outputDir, `${post.path}.html`);
-        fse.outputFileSync(postPath, postHtml);
+        let postPath = myFs.join(outputDir, `${post.path}.html`);
+        await myFs.writeTextFile(postPath, postHtml);
     }
 }
 

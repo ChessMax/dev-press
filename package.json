@@ -23,7 +23,6 @@
     "js-yaml": "^4.1.0",
     "markdown-it": "^13.0.1",
     "markdown-it-front-matter": "^0.2.3",
-    "rimraf": "^3.0.2",
     "vash": "^0.13.0"
   },
   "devDependencies": {

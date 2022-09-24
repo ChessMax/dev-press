@@ -1,4 +1,5 @@
 ﻿import {Config} from "./config";
+import {FilePath, FileSystem} from "../fs/file_system";
 
 export abstract class AppConfig extends Config {
     abstract title: string;
@@ -6,8 +7,8 @@ export abstract class AppConfig extends Config {
     abstract output: string;
     abstract source: Array<string>;
 
-    public static async load(path: string): Promise<AppConfig> {
+    public static async load(fs: FileSystem, path: FilePath): Promise<AppConfig> {
         // TODO: default values
-        return this.loadConfig<AppConfig>(path);
+        return this.loadConfig<AppConfig>(fs, path);
     }
 }
