@@ -9,7 +9,6 @@ import rimraf from 'rimraf';
 import {getTemplate} from "../view/vash/vash_view";
 import {Author, Post, Site} from "../post/post";
 import {PostViewModel} from "../view/post_view_model";
-import markdownItPrism from "markdown-it-prism";
 import MarkdownItShiki from "markdown-it-shiki";
 
 
