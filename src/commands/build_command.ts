@@ -76,7 +76,6 @@ export async function buildCommand(): Promise<void> {
         );
     }
 
-    await myFs.makeDirRecursive(myFs.join(outputDir, 'css'));
     await myFs.copyFile('./theme/css/index.css',
         myFs.join(outputDir, 'css', 'index.css'));
 
