@@ -11,8 +11,6 @@ export interface SiteMeta {
 export interface Site {
     lang: string;
     title: string;
-    post?:Post;
-    posts: Array<Post>;
     created: Date;
     author: AuthorMeta;
     description?: string;

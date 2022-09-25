@@ -1,4 +1,5 @@
-﻿site:
+﻿output: ./public
+site:
   lang: ru
   title: Мой Блогъ 2.0
   created: 2011-07-21
@@ -6,7 +7,7 @@
 author:
   name: ChessMax
   github: https://github.com/ChessMax
-output: ./public
+
 viewEngine:
   name: vash
 #  views: ''
@@ -14,8 +15,3 @@ viewEngine:
     htmlEscape: false
 #    settings:
 #      views: ./theme
-
-
-source:
-  - ./source/posts/*.md
-  - ./source/other_posts/*.md

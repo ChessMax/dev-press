@@ -1,10 +1,12 @@
 ﻿import MarkdownIt from "markdown-it";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {AppConfig} from "../core/app_config";
-import {Site} from "../post/post";
+import {Post, Site} from "../post/post";
 import MarkdownItShiki from "markdown-it-shiki";
 import {AppFileSystem} from "../fs/app_file_system";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
+import {PostViewModel} from "../view/view_models/post_view_model";
+import {IndexViewModel} from "../view/view_models/index_view_model";
 
 export async function buildCommand(): Promise<void> {
     let fs = new AppFileSystem();
@@ -37,10 +39,9 @@ export async function buildCommand(): Promise<void> {
     let site: Site = {
         ...siteMeta,
         author: author,
-        posts: [],
     };
 
-    let posts = site.posts;
+    let posts: Post[] = [];
 
     let outputDir = config.output;
     let mds = await fs.getGlob('./source/posts/*.md');
@@ -77,17 +78,24 @@ export async function buildCommand(): Promise<void> {
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
 
-    let indexTemplate = await te.getTemplate<Site>('index');
-    let html = await indexTemplate.render(site);
+    let indexTemplate = await te.getTemplate<IndexViewModel>('index');
+    let html = await indexTemplate.render({
+        site: site,
+        posts: posts,
+        author: author,
+    });
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);
 
-    let postTemplate = await te.getTemplate<Site>('post');
+    let postTemplate = await te.getTemplate<PostViewModel>('post');
 
     for (let post of posts) {
-        site.post = post;
-        post.isIndex = false;
-        let postHtml = await postTemplate.render(site);
+        let postHtml = await postTemplate.render({
+            site: site,
+            post: post,
+            author: author,
+            isIndex: false,
+        });
         let postPath = fs.join(outputDir, `${post.path}.html`);
         await fs.writeTextFile(postPath, postHtml);
     }

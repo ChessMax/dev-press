@@ -5,6 +5,5 @@ export interface AppConfig {
     site: SiteMeta;
     author: AuthorMeta;
     output: string;
-    source: Array<string>;
     viewEngine: ViewEngineConfig;
 }

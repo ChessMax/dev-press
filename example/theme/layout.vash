@@ -1,5 +1,5 @@
 ﻿@{
-  var site = model;
+  var site = model.site;
   var author = site.author;
 }<!doctype html>
 <html lang="@site.lang">
