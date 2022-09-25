@@ -77,15 +77,11 @@ export async function buildCommand(): Promise<void> {
         );
     }
 
+    let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
+    await te.initialize();
+
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
-
-    let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
-    let teConfig: ConsolidateTemplateEngineConfig = {
-        views: './theme/',
-        viewEngine: 'vash',
-    };
-    await te.initialize();
 
     let indexTemplate = await te.getTemplate<Site>('index');
     let html = await indexTemplate.render(site);

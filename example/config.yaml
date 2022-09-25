@@ -5,8 +5,12 @@ author:
 output: ./public
 viewEngine:
   name: vash
+#  views: ''
   config:
     htmlEscape: false
+#    settings:
+#      views: ./theme
+
 
 source:
   - ./source/posts/*.md

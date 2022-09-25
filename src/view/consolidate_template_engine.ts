@@ -15,7 +15,7 @@ export class ConsolidateTemplateEngine implements TemplateEngine {
     }
 
     async initialize(): Promise<void> {
-        const { name, config } = this.config;
+        const {name, config} = this.config;
         let engine = require(name);
         // @ts-ignore
         cons.requires[name] = engine;
@@ -39,10 +39,12 @@ export class ConsolidateTemplateEngine implements TemplateEngine {
     }
 
     getTemplate<T>(name: string): Promise<Template<T>> {
-        // TODO: generalize
-        if (this.fs.extname(name) === '') name += '.vash';
+        if (this.fs.extname(name) === '') {
+            let ext = this.config.ext ?? this.config.name;
+            name = `${name}.${ext}`;
+        }
         let views = this.config.views;
-        let path = views ? this.fs.join(views, name) : null;
+        let path = views ? this.fs.join(views, name) : name;
         return new ConsolidateViewTemplate<T>(this.engine, path);
     }
 }
@@ -60,7 +62,7 @@ class ConsolidateViewTemplate<T> implements Template<T> {
 
     async render(model: T): Promise<string> {
         let path = this.path;
-        path = './' + path;
+        // path = './' + path;
         let html = await this.renderer(path, model);
         return html;
     }
