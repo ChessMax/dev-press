@@ -6,6 +6,7 @@ import {Author, Post, Site} from "../post/post";
 import {PostViewModel} from "../view/post_view_model";
 import MarkdownItShiki from "markdown-it-shiki";
 import {AppFileSystem} from "../fs/app_file_system";
+import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 
 export async function buildCommand(): Promise<void> {
     let fs = new AppFileSystem();
@@ -79,7 +80,13 @@ export async function buildCommand(): Promise<void> {
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
 
-    let indexTemplate = await getTemplate<Site>(fs, 'index');
+    let te = new ConsolidateTemplateEngine();
+    await te.initialize(fs, {
+        views: './theme/',
+    });
+
+    // let indexTemplate = await getTemplate<Site>(fs, 'index');
+    let indexTemplate = await te.getTemplate<Site>('index');
     let html = await indexTemplate.render(site);
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);

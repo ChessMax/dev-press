@@ -4,6 +4,7 @@ export type FilePath = string;
 export type DirectoryPath = string;
 
 export interface FileSystem {
+    isAbsolute(path: FilePath):boolean;
     getCurrentWorkingDir():DirectoryPath;
     join(...paths: string[]): FilePath;
     getBaseName(path: FilePath, ext?: FileExt):FileName;
@@ -14,4 +15,5 @@ export interface FileSystem {
     removeDirRecursive(dir: DirectoryPath):Promise<void>;
     copyFile(srcPath: FilePath, outputPath: FilePath):Promise<void>;
     writeTextFile(path: FilePath, content: string):Promise<void>;
+    extname(name: FileName): FileExt;
 }

@@ -6,6 +6,10 @@ import {DirectoryPath, FileExt, FileName, FilePath, FileSystem} from "./file_sys
 export class AppFileSystem implements FileSystem {
     private encoding = 'utf8';
 
+    isAbsolute(path: FilePath): boolean {
+        return _path.isAbsolute(path);
+    }
+
     getCurrentWorkingDir(): string {
         return process.cwd();
     }
@@ -32,6 +36,10 @@ export class AppFileSystem implements FileSystem {
 
     writeTextFile(path: FilePath, content: string): Promise<void> {
         return fse.outputFile(path, content, {encoding: this.encoding});
+    }
+
+    extname(name: FileName): FileExt {
+        return _path.extname(name);
     }
 
     makeDirRecursive(dir: DirectoryPath): Promise<void> {
