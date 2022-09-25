@@ -38,7 +38,7 @@ export class ConsolidateTemplateEngine implements TemplateEngine {
         }
     }
 
-    getTemplate<T>(name: string): Promise<Template<T>> {
+    async getTemplate<T>(name: string): Promise<Template<T>> {
         if (this.fs.extname(name) === '') {
             let ext = this.config.ext ?? this.config.name;
             name = `${name}.${ext}`;
@@ -49,13 +49,13 @@ export class ConsolidateTemplateEngine implements TemplateEngine {
     }
 }
 
-type ConsolidateRender<TOptions> = (path: string, options: TOptions) => Promise<string>;
+type ConsolidateRender = (path: string, options: any) => Promise<string>;
 
 class ConsolidateViewTemplate<T> implements Template<T> {
     path: string;
-    renderer: ConsolidateRender<any>;
+    renderer: ConsolidateRender;
 
-    constructor(renderer: ConsolidateRender<any>, path: string) {
+    constructor(renderer: ConsolidateRender, path: string) {
         this.path = path;
         this.renderer = renderer;
     }
