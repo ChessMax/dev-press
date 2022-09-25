@@ -94,7 +94,6 @@ export async function buildCommand(): Promise<void> {
             site: site,
             post: post,
             author: author,
-            isIndex: false,
         });
         let postPath = fs.join(outputDir, `${post.path}.html`);
         await fs.writeTextFile(postPath, postHtml);
