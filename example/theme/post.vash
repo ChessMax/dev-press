@@ -1,5 +1,5 @@
-﻿@html.extend('layout', function(model){
+﻿@html.extend('theme/layout.vash', function(model){
   @html.block('content', function(model){
-    @html.include('includes/post', model.post)
+    @html.include('theme/includes/post.vash', model.post)
   })
 })

@@ -1,19 +1,19 @@
 ﻿import MarkdownIt from "markdown-it";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {AppConfig} from "../core/app_config";
-import {getTemplate} from "../view/vash/vash_view";
-import {Author, Post, Site} from "../post/post";
-import {PostViewModel} from "../view/post_view_model";
+import {Author, Site} from "../post/post";
 import MarkdownItShiki from "markdown-it-shiki";
 import {AppFileSystem} from "../fs/app_file_system";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 
 export async function buildCommand(): Promise<void> {
     let fs = new AppFileSystem();
-    let packageDir = fs.getPackageDir();
-    console.log(`packageDir: ${packageDir}`);
-
-    let config = await AppConfig.load(fs, './_config.yaml');
+    let config = await fs.loadConfig<AppConfig>('_config.yaml', {
+        viewEngine: {
+            name: 'vash',
+            views: './theme/',
+        },
+    });
 
     await fs.removeDirRecursive(config.output);
     await fs.makeDirRecursive(config.output);
@@ -80,18 +80,19 @@ export async function buildCommand(): Promise<void> {
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
 
-    let te = new ConsolidateTemplateEngine();
-    await te.initialize(fs, {
+    let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
+    let teConfig: ConsolidateTemplateEngineConfig = {
         views: './theme/',
-    });
+        viewEngine: 'vash',
+    };
+    await te.initialize();
 
-    // let indexTemplate = await getTemplate<Site>(fs, 'index');
     let indexTemplate = await te.getTemplate<Site>('index');
     let html = await indexTemplate.render(site);
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);
 
-    let postTemplate = await getTemplate<Site>(fs, 'post');
+    let postTemplate = await te.getTemplate<Site>('post');
 
     for (let post of posts) {
         site.post = post;

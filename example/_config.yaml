@@ -3,6 +3,10 @@ author:
   name: ChessMax
   github: https://github.com/ChessMax
 output: ./public
+viewEngine:
+  name: vash
+  config:
+    htmlEscape: false
 
 source:
   - ./source/posts/*.md
