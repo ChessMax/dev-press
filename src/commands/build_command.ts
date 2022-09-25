@@ -1,7 +1,7 @@
 ﻿import MarkdownIt from "markdown-it";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {AppConfig} from "../core/app_config";
-import {Author, Site} from "../post/post";
+import {Site} from "../post/post";
 import MarkdownItShiki from "markdown-it-shiki";
 import {AppFileSystem} from "../fs/app_file_system";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
@@ -18,11 +18,6 @@ export async function buildCommand(): Promise<void> {
     await fs.removeDirRecursive(config.output);
     await fs.makeDirRecursive(config.output);
 
-    console.log(`title: ${config.title}`);
-    console.log(`author: ${config.author}`);
-    console.log(`source: ${config.source}`);
-    console.log(`output: ${config.output}`);
-
     let baseUrl = '/dev-press/';
 
     let mdi: MarkdownIt;
@@ -34,18 +29,17 @@ export async function buildCommand(): Promise<void> {
         theme: 'github-light'
     });
 
-    let author: Author = {
-        name: 'ChessMax',
-        github: 'https://github.com/ChessMax',
-    };
+    let siteMeta = config.site;
+    let author = config.author;
+
+    siteMeta.created = new Date(siteMeta.created as unknown as string);
+
     let site: Site = {
+        ...siteMeta,
         author: author,
-        lang: 'ru',
-        title: 'Мой Блогъ 2.0',
-        created: new Date(2011, 1),
-        description: 'Blog description',
-        posts: []
+        posts: [],
     };
+
     let posts = site.posts;
 
     let outputDir = config.output;

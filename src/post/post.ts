@@ -1,17 +1,24 @@
 ﻿type Url = string;
 type Html = String;
 
+export interface SiteMeta {
+    lang: string;
+    title: string;
+    created: Date;
+    description?: string;
+}
+
 export interface Site {
     lang: string;
     title: string;
     post?:Post;
     posts: Array<Post>;
     created: Date;
-    author: Author;
+    author: AuthorMeta;
     description?: string;
 }
 
-export interface Author {
+export interface AuthorMeta {
     name: string;
     github?: string;
 }
@@ -20,7 +27,7 @@ export interface Post {
     url: string;
     path: Url;
     title: string;
-    author?: Author;
+    author?: AuthorMeta;
     excerpt?: Html;
     content: Html;
     summary?: Html;

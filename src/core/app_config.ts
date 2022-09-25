@@ -1,8 +1,9 @@
-﻿import {ViewEngineConfig} from "../view/view_engine_config";
+﻿import {AuthorMeta, SiteMeta} from "../post/post";
+import {ViewEngineConfig} from "../view/view_engine_config";
 
 export interface AppConfig {
-    title: string;
-    author: string;
+    site: SiteMeta;
+    author: AuthorMeta;
     output: string;
     source: Array<string>;
     viewEngine: ViewEngineConfig;
