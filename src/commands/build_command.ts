@@ -8,7 +8,7 @@ import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 
 export async function buildCommand(): Promise<void> {
     let fs = new AppFileSystem();
-    let config = await fs.loadConfig<AppConfig>('_config.yaml', {
+    let config = await fs.loadConfig<AppConfig>('config.yaml', {
         viewEngine: {
             name: 'vash',
             views: './theme/',
