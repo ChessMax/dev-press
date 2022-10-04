@@ -2,21 +2,15 @@
 import * as _path from 'path'
 import * as fse from "fs-extra";
 import {DirectoryPath, FileExt, FileName, FilePath, FileSystem} from "./file_system";
-import * as yaml from "js-yaml";
-import {deepmerge} from "deepmerge-ts";
+import {parseConfig} from "../core/parse_config";
 
 export class AppFileSystem implements FileSystem {
     private encoding = 'utf8';
 
     async loadConfig<T>(path: FilePath, defaultConfig?: Partial<T>): Promise<T> {
         let content = await this.readTextFile(path);
-        let parsedConfig = await yaml.load(content) as object;
-        if (defaultConfig) {
-            let mergedConfig = deepmerge(defaultConfig, parsedConfig);
-            let castedConfig = mergedConfig as unknown as T;
-            return castedConfig;
-        }
-        return parsedConfig as unknown as T;
+        let config = await parseConfig<T>(content, defaultConfig);
+        return config;
     }
 
     isAbsolute(path: FilePath): boolean {

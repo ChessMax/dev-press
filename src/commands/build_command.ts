@@ -7,6 +7,7 @@ import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {PostViewModel} from "../view/view_models/post_view_model";
 import {IndexViewModel} from "../view/view_models/index_view_model";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
+import {parseConfig} from "../core/parse_config";
 
 export async function buildCommand(): Promise<void> {
     let fs = new AppFileSystem();
@@ -20,13 +21,13 @@ export async function buildCommand(): Promise<void> {
     await fs.removeDirRecursive(config.output);
     await fs.makeDirRecursive(config.output);
 
-    let baseUrl = '/dev-press/';
-
+    let baseUrl = '';// '/dev-press/';
+    let fm: string = '';
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
         html: true,
-    }).use(MarkdownItFrontMatter, function (fm) {
-        console.log(`fm: ${fm}`);
+    }).use(MarkdownItFrontMatter, function (value) {
+        fm = value;
     }).use(MarkdownItShiki, {
         theme: 'github-light'
     });
@@ -50,6 +51,7 @@ export async function buildCommand(): Promise<void> {
 
         let content = await fs.readTextFile(md);
         let body = mdi.render(content);
+        let postMeta = await parseConfig<PostMeta>(fm);
 
         let r = replaceMore(body);
         let excerpt = r.excerpt;
@@ -63,7 +65,7 @@ export async function buildCommand(): Promise<void> {
                 url: postUrl,
                 path: postPath,
                 author: author,
-                title: 'Post title',
+                title: postMeta.title,
                 excerpt: excerpt,
                 content: body,
                 description: 'Post description',
@@ -127,3 +129,6 @@ function replaceMore(content: string): {
     };
 }
 
+interface PostMeta {
+    title: string;
+}
