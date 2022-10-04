@@ -1,12 +1,12 @@
 ﻿import MarkdownIt from "markdown-it";
-import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {AppConfig} from "../core/app_config";
 import {Post, Site} from "../post/post";
 import MarkdownItShiki from "markdown-it-shiki";
 import {AppFileSystem} from "../fs/app_file_system";
-import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
+import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {PostViewModel} from "../view/view_models/post_view_model";
 import {IndexViewModel} from "../view/view_models/index_view_model";
+import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 
 export async function buildCommand(): Promise<void> {
     let fs = new AppFileSystem();
