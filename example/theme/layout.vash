@@ -1,6 +1,7 @@
 ﻿@{
   var site = model.site;
   var author = model.author ?? site.author;
+  var title = model.title ?? site.title;
 }<!doctype html>
 <html lang="@site.lang">
   <head>
@@ -11,7 +12,7 @@
       <meta name="description" content="@site.description">
     }
 
-    <title>@model.title</title>
+    <title>@title</title>
 
     <link rel="stylesheet" type="text/css" href="/css/index.css">
 
