@@ -1,6 +1,6 @@
 ﻿@{
   var site = model.site;
-  var author = site.author;
+  var author = model.author ?? site.author;
 }<!doctype html>
 <html lang="@site.lang">
   <head>
@@ -18,9 +18,6 @@
     <!--TODO: download icons -->
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
-    <!--TODO: download & include only if post contains code-->
-    <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
   </head>
   <body>
 
