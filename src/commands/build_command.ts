@@ -69,6 +69,7 @@ export async function buildCommand(): Promise<void> {
                 excerpt: excerpt,
                 content: body,
                 description: postMeta.description,
+                // TODO: adjust time
                 created: postMeta.created,
                 updated: postMeta.updated,
             }
