@@ -6,6 +6,7 @@ export interface SiteMeta {
     title: string;
     created: Date;
     description?: string;
+    url: string;
 }
 
 export interface Site {

@@ -21,7 +21,7 @@ export async function buildCommand(): Promise<void> {
     await fs.removeDirRecursive(config.output);
     await fs.makeDirRecursive(config.output);
 
-    let baseUrl = '';// '/dev-press/';
+    let baseUrl = config.site.url;
     let fm: string = '';
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
