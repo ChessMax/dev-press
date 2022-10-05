@@ -32,5 +32,5 @@ export interface Post {
     summary?: Html;
     created: Date;
     updated?: Date;
-    description: string;
+    description?: string;
 }

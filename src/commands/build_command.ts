@@ -68,8 +68,9 @@ export async function buildCommand(): Promise<void> {
                 title: postMeta.title,
                 excerpt: excerpt,
                 content: body,
-                description: 'Post description',
-                created: new Date(),
+                description: postMeta.description,
+                created: postMeta.created,
+                updated: postMeta.updated,
             }
         );
     }
@@ -131,4 +132,7 @@ function replaceMore(content: string): {
 
 interface PostMeta {
     title: string;
+    created: Date;
+    updated: Date;
+    description?: string;
 }
