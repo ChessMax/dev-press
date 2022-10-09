@@ -217,3 +217,7 @@ body footer {
     clear: both;
     display: table;
 }
+
+span#more {
+    content: "Читать далее...";
+}

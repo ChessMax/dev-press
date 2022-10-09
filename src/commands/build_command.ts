@@ -115,24 +115,18 @@ function replaceMore(content: string): {
     content: string
 } {
     let excerpt: string = '';
-    let more: string = content;
-    const rExcerpt = /<!-- ?more ?-->/i;
+    const excerptTag = /<more\/>/i;
 
-    if (rExcerpt.test(content)) {
-        content = content.replace(rExcerpt, (match, index) => {
+    if (excerptTag.test(content)) {
+        content = content.replace(excerptTag, (match, index) => {
             excerpt = content.substring(0, index).trim();
-            more = content.substring(index + match.length).trim();
-
-            return '<span id="more">далее...</span>';
+            return '';
         });
     }
 
-    // console.log(`excerpt: ${excerpt}`);
-    // console.log(`more: ${more}`);
-
     return {
         excerpt: excerpt,
-        content: more,
+        content: content,
     };
 }
 
