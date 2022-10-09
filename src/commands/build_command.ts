@@ -76,6 +76,7 @@ export async function buildCommand(): Promise<void> {
         );
     }
 
+    // TODO: should be generalized?
     posts.sort((a, b) => b.created.getTime() - a.created.getTime());
 
     let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
