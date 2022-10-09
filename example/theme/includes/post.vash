@@ -21,10 +21,10 @@
   </header>
 
   <div class="post-body">
-    @if (post.excerpt) {
+    @if (post.excerpt && post.excerpt.length > 0) {
       @post.excerpt
     }
-    @if (!post.isIndex) {
+    @if (!post.isIndex || (!post.excerpt || post.excerpt.length <= 0)) {
       @post.content
     }
   </div>

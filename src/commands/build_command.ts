@@ -90,6 +90,7 @@ export async function buildCommand(): Promise<void> {
         site: site,
         posts: posts,
         author: author,
+        isIndex: true,
     });
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);
@@ -101,6 +102,7 @@ export async function buildCommand(): Promise<void> {
             site: site,
             post: post,
             author: author,
+            isIndex: false,
         });
         let postPath = fs.join(outputDir, `${post.path}.html`);
         await fs.writeTextFile(postPath, postHtml);

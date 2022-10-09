@@ -12,6 +12,9 @@
       <meta name="description" content="@site.description">
     }
 
+    <!--TODO: move to config-->
+    <meta name="yandex-verification" content="ddf5c420321d7f1c">
+
     <title>@title</title>
 
     <link rel="stylesheet" type="text/css" href="/css/index.css">
@@ -20,13 +23,23 @@
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
   </head>
+  <!-- TODO: move somewhere? -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-36876880-1"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-36876880-1');
+  </script>
   <body>
 
     <header>
       <nav>
         <a title="Home" href="/"><i class="fa-solid fa-code"></i></a>
-        <div>@model.title</div>
-        <a title="About" href="about.html"><i class="fa fa-user fa-fw"></i></a>
+        <div>@site.title</div>
+        @*<a title="About" href="theme/about.html"><i class="fa fa-user fa-fw"></i></a>*@
         <a href="@author.github" title="Follow me on GitHub"
            aria-label="Follow me on GitHub" rel="noopener" target="_blank">
           <i class="fa-brands fa-github"></i>

@@ -4,4 +4,5 @@ export interface LayoutViewModel {
     site: Site;
     author?: AuthorMeta;
     title?: string;
+    isIndex: boolean;
 }
