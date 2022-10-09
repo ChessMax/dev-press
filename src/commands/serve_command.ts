@@ -2,7 +2,9 @@
 import {buildCommand} from "./build_command";
 
 export async function serveCommand(): Promise<void> {
-    await buildCommand();
+    await buildCommand({
+        baseUrlOverride: '',
+    });
 
     const app = e();
     const port = 3000;

@@ -9,7 +9,11 @@ import {IndexViewModel} from "../view/view_models/index_view_model";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 import {parseConfig} from "../core/parse_config";
 
-export async function buildCommand(): Promise<void> {
+interface BuildConfig {
+    baseUrlOverride?: string;
+}
+
+export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     let fs = new AppFileSystem();
     let config = await fs.loadConfig<AppConfig>('config.yaml', {
         viewEngine: {
@@ -17,6 +21,10 @@ export async function buildCommand(): Promise<void> {
             views: './theme/',
         },
     });
+
+    if (buildConfig && buildConfig.baseUrlOverride != undefined) {
+        config.site.url = buildConfig.baseUrlOverride;
+    }
 
     await fs.removeDirRecursive(config.output);
     await fs.makeDirRecursive(config.output);
