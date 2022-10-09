@@ -59,7 +59,7 @@ export async function buildCommand(): Promise<void> {
 
         let fileName = fs.getBaseName(md, '.md');
         let postPath = fs.join(`/posts/${fileName}`);
-        let postUrl = fs.join(baseUrl, `/posts/${fileName}.html`);
+        let postUrl = fs.join(baseUrl ? baseUrl : '', `/posts/${fileName}.html`);
 
         posts.push({
                 url: postUrl,
