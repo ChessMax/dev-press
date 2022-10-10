@@ -33,4 +33,6 @@ export interface Post {
     created: Date;
     updated?: Date;
     description?: string;
+    tags?: string[];
+    urlBuilder: UrlBuilder;
 }

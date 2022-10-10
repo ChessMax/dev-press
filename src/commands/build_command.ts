@@ -50,6 +50,12 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         author: author,
     };
 
+    let urlBuilder: UrlBuilder = {
+        getTagUrl(tag: string): string {
+            return `./tags/${tag}`;
+        }
+    };
+
     let posts: Post[] = [];
 
     let outputDir = config.output;
@@ -80,6 +86,8 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
                 // TODO: adjust time
                 created: postMeta.created,
                 updated: postMeta.updated,
+                tags: postMeta.tags,
+                urlBuilder: urlBuilder,
             }
         );
     }
@@ -99,6 +107,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         posts: posts,
         author: author,
         isIndex: true,
+        urlBuilder: urlBuilder,
     });
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);
@@ -111,6 +120,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
             post: post,
             author: author,
             isIndex: false,
+            urlBuilder: urlBuilder,
         });
         let postPath = fs.join(outputDir, `${post.path}.html`);
         await fs.writeTextFile(postPath, postHtml);
@@ -143,4 +153,5 @@ interface PostMeta {
     created: Date;
     updated: Date;
     description?: string;
+    tags?: string[];
 }
