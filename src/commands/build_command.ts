@@ -40,6 +40,20 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         theme: 'github-light'
     });
 
+    let highlight = mdi.options.highlight!;
+    mdi.options.highlight = (code, lang, attrs) => {
+        let lines = code.split(/\r?\n/);
+        let spacesPerLine = lines
+            .filter((line) => line.trim().length > 0)
+            .map((line) => line.length - line.trimStart().length);
+        let commonSpaceWidth = Math.min(...spacesPerLine);
+        if (commonSpaceWidth > 0) {
+            code = lines.map((line) => line.substring(commonSpaceWidth)).join('\n');
+        }
+        let highlighted = highlight(code, lang, attrs);
+        return highlighted;
+    };
+
     let siteMeta = config.site;
     let author = config.author;
 
