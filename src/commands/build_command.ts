@@ -42,6 +42,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
     let highlight = mdi.options.highlight!;
     mdi.options.highlight = (code, lang, attrs) => {
+        code = code.trimEnd();
         let lines = code.split(/\r?\n/);
         let spacesPerLine = lines
             .filter((line) => line.trim().length > 0)
