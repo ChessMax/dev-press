@@ -116,6 +116,10 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
 
+    // TODO: fix explicit file copy
+    await fs.copyFile('./source/posts/step_on_a_rake.png',
+        fs.join(outputDir, 'posts', 'step_on_a_rake.png'));
+
     let indexTemplate = await te.getTemplate<IndexViewModel>('index');
     let html = await indexTemplate.render({
         site: site,
