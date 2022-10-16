@@ -1,10 +1,29 @@
 ﻿import e from "express";
 import {buildCommand} from "./build_command";
 import {watch} from "chokidar";
+import {WebSocket} from "ws";
 
 export async function serveCommand(): Promise<void> {
     await buildCommand({
         baseUrlOverride: '',
+    });
+
+    let clients = new Array<WebSocket>();
+
+    let reloadClients = () => {
+        for (const client of clients) {
+            client.send('reload');
+        }
+    };
+
+    let ws = new WebSocket.Server({port: 9000});
+    ws.on('connection', (client) => {
+        console.log('Client connected');
+        client.onclose = () => {
+            console.log('Client disconnected');
+            clients = clients.filter((e) => e != client);
+        }
+        clients.push(client);
     });
 
     let building = false;
@@ -23,6 +42,9 @@ export async function serveCommand(): Promise<void> {
             });
 
             console.log('rebuild completed');
+
+            reloadClients();
+
             building = false;
         }
     });
