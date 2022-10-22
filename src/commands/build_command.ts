@@ -1,11 +1,10 @@
 ﻿import MarkdownIt from "markdown-it";
 import {AppConfig} from "../core/app_config";
-import {Post, Site} from "../post/post";
+import {Post} from "../post/post";
+import {Site} from "../post/site";
 import MarkdownItShiki from "markdown-it-shiki";
 import {AppFileSystem} from "../fs/app_file_system";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
-import {PostViewModel} from "../view/view_models/post_view_model";
-import {IndexViewModel} from "../view/view_models/index_view_model";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 import {parseConfig} from "../core/parse_config";
 
@@ -60,10 +59,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
     siteMeta.created = new Date(siteMeta.created as unknown as string);
 
-    let site: Site = {
-        ...siteMeta,
-        author: author,
-    };
+    let posts: Post[] = [];
 
     let urlBuilder: UrlBuilder = {
         getTagUrl(tag: string): string {
@@ -71,7 +67,12 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         }
     };
 
-    let posts: Post[] = [];
+    let site: Site = {
+        ...siteMeta,
+        posts: posts,
+        author: author,
+        urlBuilder: urlBuilder,
+    };
 
     let outputDir = config.output;
     let mds = await fs.getGlob('./source/posts/*.md');
@@ -96,11 +97,14 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
         let postUrl = `${baseUrl}/posts/${fileName}.html`;
 
+        let postTitle = postMeta.title;
+
         posts.push({
+                site: site,
                 url: postUrl,
                 path: postPath,
                 author: author,
-                title: postMeta.title,
+                title: postTitle,
                 excerpt: excerpt,
                 content: body,
                 description: postMeta.description,
@@ -126,27 +130,15 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     await fs.copyFile('./source/posts/step_on_a_rake.png',
         fs.join(outputDir, 'posts', 'step_on_a_rake.png'));
 
-    let indexTemplate = await te.getTemplate<IndexViewModel>('index');
-    let html = await indexTemplate.render({
-        site: site,
-        posts: posts,
-        author: author,
-        isIndex: true,
-        urlBuilder: urlBuilder,
-    });
+    let indexTemplate = await te.getTemplate<Site>('index');
+    let html = await indexTemplate.render(site);
     let htmlPath = fs.join(outputDir, 'index.html');
     await fs.writeTextFile(htmlPath, html);
 
-    let postTemplate = await te.getTemplate<PostViewModel>('post');
+    let postTemplate = await te.getTemplate<Post>('post');
 
     for (let post of posts) {
-        let postHtml = await postTemplate.render({
-            site: site,
-            post: post,
-            author: author,
-            isIndex: false,
-            urlBuilder: urlBuilder,
-        });
+        let postHtml = await postTemplate.render(post);
         let postPath = fs.join(outputDir, `${post.path}.html`);
         await fs.writeTextFile(postPath, postHtml);
     }
