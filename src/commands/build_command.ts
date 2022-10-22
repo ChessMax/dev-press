@@ -84,7 +84,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         let postMeta = await parseConfig<PostMeta>(fm);
 
         let r = replaceMore(body);
-        let excerpt = r.excerpt;
+        let intro = r.intro;
         body = r.content;
 
         let fileName = fs.getBaseName(md, '.md');
@@ -105,7 +105,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
                 path: postPath,
                 author: author,
                 title: postTitle,
-                excerpt: excerpt,
+                intro: intro,
                 content: body,
                 description: postMeta.description,
                 // TODO: adjust time
@@ -146,21 +146,21 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
 // TODO: make plugin?
 function replaceMore(content: string): {
-    excerpt: string,
+    intro: string,
     content: string
 } {
-    let excerpt: string = '';
+    let intro: string = '';
     const excerptTag = /<more\/>/i;
 
     if (excerptTag.test(content)) {
         content = content.replace(excerptTag, (match, index) => {
-            excerpt = content.substring(0, index).trim();
+            intro = content.substring(0, index).trim();
             return '';
         });
     }
 
     return {
-        excerpt: excerpt,
+        intro: intro,
         content: content,
     };
 }

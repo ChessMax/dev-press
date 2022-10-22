@@ -22,7 +22,7 @@ export interface Post {
     path: Url;
     title: string;
     author?: AuthorMeta;
-    excerpt?: Html;
+    intro?: Html;
     content: Html;
     summary?: Html;
     created: Date;
