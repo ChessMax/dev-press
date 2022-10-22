@@ -90,7 +90,11 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         let postPath = fs.join(`/posts/${fileName}`);
         // let postUrl = fs.join(baseUrl ? baseUrl : '', `/posts/${fileName}.html`);
         // TODO: join breaks url for some reason(
-        let postUrl = baseUrl ? `${baseUrl}/posts/${fileName}.html` : '';
+        if (baseUrl === undefined || baseUrl == null) {
+            baseUrl = '';
+        }
+
+        let postUrl = `${baseUrl}/posts/${fileName}.html`;
 
         posts.push({
                 url: postUrl,
