@@ -33,8 +33,12 @@ export class AppFileSystem implements FileSystem {
         return await fse.readFile(path, this.encoding);
     }
 
-    removeDirRecursive(dir: DirectoryPath): Promise<void> {
-        return fse.rm(dir, {recursive: true});
+    async removeDirRecursive(dir: DirectoryPath): Promise<void> {
+        try {
+            await fse.rm(dir, {recursive: true});
+        }
+        catch (e) {
+        }
     }
 
     copyFile(srsPath: FilePath, outputPath: FilePath): Promise<void> {
