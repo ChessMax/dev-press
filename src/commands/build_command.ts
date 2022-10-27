@@ -7,6 +7,7 @@ import {AppFileSystem} from "../fs/app_file_system";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 import {parseConfig} from "../core/parse_config";
+import {Feed} from "../post/feed";
 
 interface BuildConfig {
     baseUrlOverride?: string;
@@ -142,6 +143,39 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         let postPath = fs.join(outputDir, `${post.path}.html`);
         await fs.writeTextFile(postPath, postHtml);
     }
+
+    // TODO: move to its own plugin?
+    let feedTemplate = await te.getTemplate<Feed>('feed');
+    let feedHtml = await feedTemplate.render({
+        title: site.title,
+        selfLink: `${baseUrl}/atom.xml`,
+        link: baseUrl,
+        updated: new Date(),
+        id: baseUrl,
+        author: site.author,
+        entries: posts.map((post) => {
+            let tags = post.tags;
+            let summary = (post.intro || post.content).substring(0, 140);
+            return {
+               title: post.title,
+               link: post.url,
+               id: post.url,
+               published: post.created,
+               updated: post.updated ?? new Date(),
+               summary: summary,
+               categories: tags ? tags.map((tag) => {
+                   return {
+                       term: tag,
+                       // scheme: urlBuilder.getTagUrl(tag)
+                       scheme: `${baseUrl}/tags/${tag}`,
+                   };
+               }) : [],
+            };
+        }),
+    });
+    let feedPath = fs.join(outputDir, `atom.xml`);
+    await fs.writeTextFile(feedPath, feedHtml);
+    // end
 }
 
 // TODO: make plugin?
