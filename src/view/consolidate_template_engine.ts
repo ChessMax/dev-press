@@ -35,6 +35,7 @@ export class ConsolidateTemplateEngine implements TemplateEngine {
         if (name == 'vash') {
             engine.helpers.echo = (arg: any) => arg.toString();
             engine.helpers.logo = (arg: any) => console.log(arg);
+            engine.helpers.encodeURI = (arg: any) => encodeURI(arg);
         }
     }
 
