@@ -126,6 +126,8 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
     await fs.copyFile('./theme/css/index.css',
         fs.join(outputDir, 'css', 'index.css'));
+    await fs.copyFile('./theme/images/favicon.svg',
+        fs.join(outputDir, 'images', 'favicon.svg'));
 
     // TODO: fix explicit file copy
     await fs.copyFile('./source/posts/step_on_a_rake.png',
