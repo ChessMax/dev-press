@@ -8,6 +8,8 @@ import MarkdownItFrontMatter from "markdown-it-front-matter";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
 import {parseConfig} from "../core/parse_config";
 import {Feed} from "../post/feed";
+import {Tag} from "../post/tag";
+import {Tags} from "../post/tags";
 
 interface BuildConfig {
     baseUrlOverride?: string;
@@ -159,24 +161,61 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
             let tags = post.tags;
             let summary = (post.intro || post.content).substring(0, 140);
             return {
-               title: post.title,
-               link: post.url,
-               id: post.url,
-               published: post.created,
-               updated: post.updated ?? new Date(),
-               summary: summary,
-               categories: tags ? tags.map((tag) => {
-                   return {
-                       term: tag,
-                       // scheme: urlBuilder.getTagUrl(tag)
-                       scheme: `${baseUrl}/tags/${tag}`,
-                   };
-               }) : [],
+                title: post.title,
+                link: post.url,
+                id: post.url,
+                published: post.created,
+                updated: post.updated ?? new Date(),
+                summary: summary,
+                categories: tags ? tags.map((tag) => {
+                    return {
+                        term: tag,
+                        // scheme: urlBuilder.getTagUrl(tag)
+                        scheme: `${baseUrl}/tags/${tag}`,
+                    };
+                }) : [],
             };
         }),
     });
     let feedPath = fs.join(outputDir, `atom.xml`);
     await fs.writeTextFile(feedPath, feedHtml);
+    // end
+
+    // tag screen
+    let tagsTemplate = await te.getTemplate<Tags>('tags');
+    let tags = {} as Record<string, Tag>;
+    for (let post of posts) {
+        let postTags = post.tags;
+        if (postTags !== undefined) {
+            for (let postTag of postTags) {
+                let tagPosts = tags[postTag];
+                if (tagPosts !== undefined) {
+                    tagPosts.posts.push(post);
+                } else {
+                    let encodedTag = encodeURI(postTag);
+                    tags[postTag] = {
+                        name: postTag,
+                        posts: [post],
+                        link: `${baseUrl}/tags/${encodedTag}/`,
+                        ref: encodedTag,
+                        site: site,
+                    };
+                }
+            }
+        }
+    }
+
+    let tagsView = Object.values(tags);
+
+    let tagsHtml = await tagsTemplate.render({
+        site: site,
+        tags: tagsView,
+    });
+
+    let tagsPath = fs.join(outputDir, 'tags', 'index.html');
+    await fs.writeTextFile(tagsPath, tagsHtml);
+
+    console.log(`${tags}`);
     // end
 }
 
