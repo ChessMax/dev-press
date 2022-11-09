@@ -1,4 +1,5 @@
 ﻿import {Site} from "./site";
+import {Tag} from "./tag";
 
 type Url = string;
 type Html = String;
@@ -28,6 +29,6 @@ export interface Post {
     created: Date;
     updated?: Date;
     description?: string;
-    tags?: string[];
+    tags?: Tag[];
     urlBuilder: UrlBuilder;
 }

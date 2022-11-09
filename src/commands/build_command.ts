@@ -77,6 +77,8 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         urlBuilder: urlBuilder,
     };
 
+    let tagsMap = {} as Record<string, Tag>;
+
     let outputDir = config.output;
     let mds = await fs.getGlob('./source/posts/*.md');
     for (const md of mds) {
@@ -102,22 +104,50 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
         let postTitle = postMeta.title;
 
-        posts.push({
-                site: site,
-                url: postUrl,
-                path: postPath,
-                author: author,
-                title: postTitle,
-                intro: intro,
-                content: body,
-                description: postMeta.description,
-                // TODO: adjust time
-                created: postMeta.created,
-                updated: postMeta.updated,
-                tags: postMeta.tags,
-                urlBuilder: urlBuilder,
+        let postTags: Record<string, Tag> = {};
+        let post: Post = {
+            site: site,
+            url: postUrl,
+            path: postPath,
+            author: author,
+            title: postTitle,
+            intro: intro,
+            content: body,
+            description: postMeta.description,
+            // TODO: adjust time
+            created: postMeta.created,
+            updated: postMeta.updated,
+            // tags: postTags,
+            urlBuilder: urlBuilder,
+        };
+        posts.push(post);
+
+        // tags
+
+        if (postMeta.tags !== undefined) {
+            for (let postTag of postMeta.tags) {
+                let tag = tagsMap[postTag];
+                if (tag !== undefined) {
+                    tag.posts.push(post);
+                } else {
+                    let encodedTag = encodeURI(postTag);
+                    tag = {
+                        name: postTag,
+                        posts: [post],
+                        link: `${baseUrl}/tags/${encodedTag}/`,
+                        ref: encodedTag,
+                        site: site,
+                    };
+                    tagsMap[postTag] = tag;
+                }
+
+                postTags[tag.name] = tag;
             }
-        );
+        }
+
+        post.tags = Object.values(postTags);
+
+        // end tags
     }
 
     // TODO: should be generalized?
@@ -169,9 +199,10 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
                 summary: summary,
                 categories: tags ? tags.map((tag) => {
                     return {
-                        term: tag,
+                        term: tag.name,
                         // scheme: urlBuilder.getTagUrl(tag)
-                        scheme: `${baseUrl}/tags/${tag}`,
+                        // scheme: `${baseUrl}/tags/${tag.name}`,
+                        scheme: tag.link,
                     };
                 }) : [],
             };
@@ -181,31 +212,9 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     await fs.writeTextFile(feedPath, feedHtml);
     // end
 
-    // tag screen
+    // tags screen
     let tagsTemplate = await te.getTemplate<Tags>('tags');
-    let tags = {} as Record<string, Tag>;
-    for (let post of posts) {
-        let postTags = post.tags;
-        if (postTags !== undefined) {
-            for (let postTag of postTags) {
-                let tagPosts = tags[postTag];
-                if (tagPosts !== undefined) {
-                    tagPosts.posts.push(post);
-                } else {
-                    let encodedTag = encodeURI(postTag);
-                    tags[postTag] = {
-                        name: postTag,
-                        posts: [post],
-                        link: `${baseUrl}/tags/${encodedTag}/`,
-                        ref: encodedTag,
-                        site: site,
-                    };
-                }
-            }
-        }
-    }
-
-    let tagsView = Object.values(tags);
+    let tagsView = Object.values(tagsMap);
 
     let tagsHtml = await tagsTemplate.render({
         site: site,
@@ -214,8 +223,6 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
 
     let tagsPath = fs.join(outputDir, 'tags', 'index.html');
     await fs.writeTextFile(tagsPath, tagsHtml);
-
-    console.log(`${tags}`);
     // end
 }
 
