@@ -10,6 +10,7 @@ import {parseConfig} from "../core/parse_config";
 import {Feed} from "../post/feed";
 import {Tag} from "../post/tag";
 import {Tags} from "../post/tags";
+import {Template} from "../view/template";
 
 interface BuildConfig {
     baseUrlOverride?: string;
@@ -213,18 +214,33 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     // end
 
     // tags screen
+    async function renderTags(tagsTemplate: Template<Tags>, path: string, tags: Tags): Promise<void> {
+        let tagsHtml = await tagsTemplate.render(tags);
+
+        let tagsPath = fs.join(outputDir, path, 'index.html');
+        await fs.writeTextFile(tagsPath, tagsHtml);
+    }
+
     let tagsTemplate = await te.getTemplate<Tags>('tags');
     let tagsView = Object.values(tagsMap);
 
-    let tagsHtml = await tagsTemplate.render({
-        site: site,
-        tags: tagsView,
-    });
+    await renderTags(tagsTemplate, 'tags', {
+            title: 'Tags',
+            site: site,
+            tags: tagsView,
+        }
+    );
 
-    let tagsPath = fs.join(outputDir, 'tags', 'index.html');
-    await fs.writeTextFile(tagsPath, tagsHtml);
-    // end
+    for (let tag of tagsView) {
+        await renderTags(tagsTemplate, `tags/${tag.name}`, {
+                title: tag.name,
+                site: site,
+                tags: [tag],
+            }
+        );
+    }
 }
+
 
 // TODO: make plugin?
 function replaceMore(content: string): {
