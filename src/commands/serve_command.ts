@@ -4,8 +4,10 @@ import {watch} from "chokidar";
 import {WebSocket} from "ws";
 
 export async function serveCommand(): Promise<void> {
+    const port = 3000;
+    let baseUrl = `http://localhost:${port}`;
     await buildCommand({
-        baseUrlOverride: '',
+        baseUrlOverride: baseUrl,
     });
 
     let clients = new Array<WebSocket>();
@@ -50,11 +52,10 @@ export async function serveCommand(): Promise<void> {
     });
 
     const app = e();
-    const port = 3000;
 
     app.use(e.static('./public/'));
 
     app.listen(port, () => {
-        console.log(`Serving started at http://localhost:${port}`);
+        console.log(`Serving started at ${baseUrl}`);
     });
 }
