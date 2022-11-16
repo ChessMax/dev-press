@@ -8,4 +8,5 @@ export interface Site {
     author: AuthorMeta;
     description?: string;
     urlBuilder: UrlBuilder;
+    baseUrl?: string;
 }

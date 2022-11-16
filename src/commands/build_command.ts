@@ -11,6 +11,7 @@ import {Feed} from "../post/feed";
 import {Tag} from "../post/tag";
 import {Tags} from "../post/tags";
 import {Template} from "../view/template";
+import path from "path";
 
 interface BuildConfig {
     baseUrlOverride?: string;
@@ -75,6 +76,7 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
         ...siteMeta,
         posts: posts,
         author: author,
+        baseUrl: baseUrl,
         urlBuilder: urlBuilder,
     };
 
@@ -157,8 +159,15 @@ export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
     await te.initialize();
 
-    await fs.copyFile('./theme/css/index.css',
-        fs.join(outputDir, 'css', 'index.css'));
+    // let cssUrl = `${baseUrl}/css/index.css`;
+
+    async function copyCss(from:string):Promise<void> {
+        let name = path.basename(from);
+        await fs.copyFile(from, fs.join(outputDir, 'css', name));
+    }
+
+    await copyCss('./theme/css/index.css');
+    await copyCss('./theme/css/all.min.css');
     await fs.copyFile('./theme/images/favicon.svg',
         fs.join(outputDir, 'images', 'favicon.svg'));
 
