@@ -1,6 +1,6 @@
 {
   "name": "dev-press",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Simple static blog generator",
   "main": "./lib/index.js",
   "types": "./lib/src/index.d.ts",
