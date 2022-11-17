@@ -12,7 +12,7 @@
     "build": "tsc -p ."
   },
   "prepublish": "tsc",
-  "keywords": ["ssg"],
+  "keywords": ["ssg", "website", "blog", "cms"],
   "author": "ChessMax",
   "license": "MIT",
   "dependencies": {
