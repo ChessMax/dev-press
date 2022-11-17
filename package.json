@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Simple static blog generator",
   "main": "./lib/index.js",
+  "types": "./lib/src/index.d.ts",
   "bin": {
     "devpress": "./lib.index.js"
   },
@@ -10,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p ."
   },
-  "keywords": [],
+  "prepublish": "tsc",
+  "keywords": ["ssg"],
   "author": "ChessMax",
   "license": "MIT",
   "dependencies": {
