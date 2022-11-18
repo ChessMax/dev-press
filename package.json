@@ -1,6 +1,6 @@
 {
   "name": "dev-press",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Simple static blog generator",
   "main": "./lib/index.js",
   "types": "./lib/src/index.d.ts",
@@ -12,7 +12,12 @@
     "build": "tsc -p ."
   },
   "prepublish": "tsc",
-  "keywords": ["ssg", "website", "blog", "cms"],
+  "keywords": [
+    "ssg",
+    "website",
+    "blog",
+    "cms"
+  ],
   "author": "ChessMax",
   "license": "MIT",
   "dependencies": {
