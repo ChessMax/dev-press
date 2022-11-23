@@ -4,7 +4,7 @@ export type FilePath = string;
 export type DirectoryPath = string;
 
 export interface FileSystem {
-    loadConfig<T>(path: FilePath, defaultConfig?: T): Promise<T>;
+    loadConfig<T>(path: FilePath, defaultConfig?: Partial<T>): Promise<T>;
 
     isAbsolute(path: FilePath): boolean;
 

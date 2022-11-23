@@ -2,9 +2,15 @@
 import {buildCommand} from "./build_command";
 import {watch} from "chokidar";
 import {WebSocket} from "ws";
+import {AppFileSystem} from "../fs/app_file_system";
+import {loadAppConfig} from "../core/app_config";
 
 export async function serveCommand(): Promise<void> {
-    const port = 3000;
+    let fs = new AppFileSystem();
+    let config = await loadAppConfig(fs);
+    let serverConfig = config.server;
+    let port = serverConfig.port;
+
     let baseUrl = `http://localhost:${port}`;
     await buildCommand({
         baseUrlOverride: baseUrl,
@@ -18,7 +24,7 @@ export async function serveCommand(): Promise<void> {
         }
     };
 
-    let ws = new WebSocket.Server({port: 9000});
+    let ws = new WebSocket.Server({port: serverConfig.webSocketPort});
     ws.on('connection', (client) => {
         console.log('Client connected');
         client.onclose = () => {
@@ -53,7 +59,7 @@ export async function serveCommand(): Promise<void> {
 
     const app = e();
 
-    app.use(e.static('./public/'));
+    app.use(e.static(config.output));
 
     app.listen(port, () => {
         console.log(`Serving started at ${baseUrl}`);
