@@ -3,11 +3,11 @@ import {buildCommand} from "./build_command";
 import {watch} from "chokidar";
 import {WebSocket} from "ws";
 import {AppFileSystem} from "../fs/app_file_system";
-import {loadAppConfig} from "../core/app_config";
+import {Config} from "../core/app_config";
 
 export async function serveCommand(): Promise<void> {
     let fs = new AppFileSystem();
-    let config = await loadAppConfig(fs);
+    let config = await Config.loadAppConfig(fs);
     let serverConfig = config.server;
     let port = serverConfig.port;
 

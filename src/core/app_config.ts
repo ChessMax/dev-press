@@ -1,7 +1,7 @@
 ﻿import {AuthorMeta, SiteMeta} from "../post/post";
 import {ViewEngineConfig} from "../view/view_engine_config";
 import {ServerConfig} from "../commands/server_config";
-import {FileSystem} from "../fs/file_system";
+import {FilePath, FileSystem} from "../fs/file_system";
 
 export interface AppConfig {
     site: SiteMeta;
@@ -11,16 +11,15 @@ export interface AppConfig {
     viewEngine: ViewEngineConfig;
 }
 
-export async function loadAppConfig(fs: FileSystem, name: string = 'config.yaml') : Promise<AppConfig> {
-    let config = await fs.loadConfig<AppConfig>(name, {
-        viewEngine: {
-            name: 'vash',
-            views: './theme/',
-        },
-        server: {
-            port: 3000,
-            webSocketPort: 9000,
-        }
-    });
-    return config;
+export abstract class Config {
+    static async loadAppConfig(fs: FileSystem, name: string = 'config.yaml'):Promise<AppConfig> {
+        let config = await Config.load<AppConfig>(fs, name);
+        return config;
+    }
+    static async load<T>(fs: FileSystem, path: FilePath):Promise<T> {
+        let packageDir = await fs.getPackageDir();
+        let defaultConfig = await fs.loadConfig<T>(fs.join(packageDir, path));
+        let config = await fs.loadConfig<T>(fs.join(fs.getCurrentWorkingDir(), path), defaultConfig);
+        return config;
+    }
 }

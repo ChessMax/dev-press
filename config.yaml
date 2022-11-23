@@ -1,0 +1,9 @@
+﻿output: ./public
+viewEngine:
+  name: vash
+  views: ./theme
+  config:
+    htmlEscape: false
+server:
+  port: 3000
+  webSocketPort: 9000

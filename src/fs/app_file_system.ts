@@ -3,6 +3,8 @@ import * as _path from 'path'
 import * as fse from "fs-extra";
 import {DirectoryPath, FileExt, FileName, FilePath, FileSystem} from "./file_system";
 import {parseConfig} from "../core/parse_config";
+import {PathLike} from "fs";
+import path from "path";
 
 export class AppFileSystem implements FileSystem {
     private encoding = 'utf8';
@@ -22,7 +24,10 @@ export class AppFileSystem implements FileSystem {
     }
 
     getPackageDir(): DirectoryPath {
-        return __dirname;
+        let packageDir = __dirname;
+        // TODO: is there a better way?
+        packageDir = path.join(fse.realpathSync(packageDir as PathLike), '../../../');
+        return packageDir;
     }
 
     getGlob(pattern: string): Promise<FilePath[]> {
@@ -36,8 +41,7 @@ export class AppFileSystem implements FileSystem {
     async removeDirRecursive(dir: DirectoryPath): Promise<void> {
         try {
             await fse.rm(dir, {recursive: true});
-        }
-        catch (e) {
+        } catch (e) {
         }
     }
 
