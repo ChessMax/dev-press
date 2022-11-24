@@ -1,5 +1,5 @@
 ﻿import MarkdownIt from "markdown-it";
-import {AppConfig} from "../core/app_config";
+import {AppConfig, Config} from "../core/app_config";
 import {Post} from "../post/post";
 import {Site} from "../post/site";
 import MarkdownItShiki from "markdown-it-shiki";
@@ -19,12 +19,7 @@ interface BuildConfig {
 
 export async function buildCommand(buildConfig?: BuildConfig): Promise<void> {
     let fs = new AppFileSystem();
-    let config = await fs.loadConfig<AppConfig>('config.yaml', {
-        viewEngine: {
-            name: 'vash',
-            views: './theme/',
-        },
-    });
+    let config = await Config.loadAppConfig(fs);
 
     if (buildConfig && buildConfig.baseUrlOverride != undefined) {
         config.site.url = buildConfig.baseUrlOverride;
