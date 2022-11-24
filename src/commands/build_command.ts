@@ -1,5 +1,5 @@
 ﻿import MarkdownIt from "markdown-it";
-import {AppConfig, Config} from "../core/app_config";
+import {Config} from "../core/app_config";
 import {Post} from "../post/post";
 import {Site} from "../post/site";
 import MarkdownItShiki from "markdown-it-shiki";
