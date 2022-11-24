@@ -7,3 +7,4 @@ viewEngine:
 server:
   port: 3000
   webSocketPort: 9000
+  hotReload: true
