@@ -4,6 +4,7 @@ import {watch} from "chokidar";
 import {WebSocket} from "ws";
 import {AppFileSystem} from "../fs/app_file_system";
 import {Config} from "../core/app_config";
+import {DevPress} from "../core/dev_press";
 
 export async function serveCommand(): Promise<void> {
     let fs = new AppFileSystem();
@@ -12,9 +13,14 @@ export async function serveCommand(): Promise<void> {
     let port = serverConfig.port;
 
     let baseUrl = `http://localhost:${port}`;
-    await buildCommand({
-        baseUrlOverride: baseUrl,
+    let app = await DevPress.initialize({
+        config: {
+            site: {
+                url: baseUrl,
+            },
+        }
     });
+    await app.build();
 
     let clients = new Array<WebSocket>();
 
@@ -45,9 +51,15 @@ export async function serveCommand(): Promise<void> {
             building = true;
             console.log(`Something changed: ${event} ${path}`);
 
-            await buildCommand({
-                baseUrlOverride: '',
-            });
+            let app = await DevPress.initialize({
+                    config: {
+                        site: {
+                            url: baseUrl,
+                        },
+                    }
+                }
+            );
+            await app.build();
 
             console.log('rebuild completed');
 
@@ -57,11 +69,11 @@ export async function serveCommand(): Promise<void> {
         }
     });
 
-    const app = e();
+    const expressApp = e();
 
-    app.use(e.static(config.output));
+    expressApp.use(e.static(config.output));
 
-    app.listen(port, () => {
+    expressApp.listen(port, () => {
         console.log(`Serving started at ${baseUrl}`);
     });
 }
