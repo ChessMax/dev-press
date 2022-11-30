@@ -1,8 +1,5 @@
 ﻿import {AppFileSystem} from "../fs/app_file_system";
 import {AppConfig, Config} from "./app_config";
-import MarkdownIt from "markdown-it";
-import MarkdownItFrontMatter from "markdown-it-front-matter";
-import MarkdownItShiki from "markdown-it-shiki";
 import {Post} from "../post/post";
 import {Site} from "../post/site";
 import {Tag} from "../post/tag";
@@ -14,8 +11,6 @@ import {Template} from "../view/template";
 import {Tags} from "../post/tags";
 import {FileSystem} from "../fs/file_system";
 import {RecursivePartial} from "./recursive_partial";
-import {deepmerge} from "deepmerge-ts";
-import * as util from "util";
 import {AppLogger} from "./app_logger";
 import {PostMeta} from "../post/post_meta";
 
@@ -24,13 +19,22 @@ export interface DevPressParams {
     config?: RecursivePartial<AppConfig>;
 }
 
+export type Renderer = (content: string, env?: any) => string | Promise<string>;
+
 export class DevPress {
     fs: FileSystem;
     config: AppConfig;
+    renderers: Record<string, Renderer> = {};
 
     constructor(config: AppConfig, fs: FileSystem) {
         this.fs = fs;
         this.config = config;
+    }
+
+    async render(name: string, content: string, env?: any):Promise<string> {
+        let renderer = this.renderers[name];
+        let result = await renderer(content, env);
+        return result;
     }
 
     async build(): Promise<void> {
@@ -41,31 +45,6 @@ export class DevPress {
         await fs.makeDirRecursive(config.output);
 
         let baseUrl = config.site.url;
-        let fm: string = '';
-        let mdi: MarkdownIt;
-        mdi = MarkdownIt({
-            html: true,
-        }).use(MarkdownItFrontMatter, function (value) {
-            fm = value;
-        }).use(MarkdownItShiki, {
-            theme: 'github-light'
-        });
-
-        let highlight = mdi.options.highlight!;
-        mdi.options.highlight = (code, lang, attrs) => {
-            code = code.trimEnd();
-            let lines = code.split(/\r?\n/);
-            let spacesPerLine = lines
-                .filter((line) => line.trim().length > 0)
-                .map((line) => line.length - line.trimStart().length);
-            let commonSpaceWidth = Math.min(...spacesPerLine);
-            if (commonSpaceWidth > 0) {
-                code = lines.map((line) => line.substring(commonSpaceWidth)).join('\n');
-            }
-            let highlighted = highlight(code, lang, attrs);
-            return highlighted;
-        };
-
         let siteMeta = config.site;
         let author = config.author;
 
@@ -91,12 +70,13 @@ export class DevPress {
 
         let outputDir = config.output;
         let mds = await fs.getGlob('./source/posts/*.md');
+        let mdiEnv = {fm: ''};
         for (const md of mds) {
             console.log(`md: ${md}`);
 
             let content = await fs.readTextFile(md);
-            let body = mdi.render(content);
-            let postMeta = await parseConfig<PostMeta>(fm);
+            let body = await this.render('markdown', content, mdiEnv);
+            let postMeta = await parseConfig<PostMeta>(mdiEnv.fm);
 
             let r = replaceMore(body);
             let intro = r.intro;
@@ -260,10 +240,15 @@ export class DevPress {
     static async initialize(params?: DevPressParams): Promise<DevPress> {
         let fs = params?.fs ?? new AppFileSystem();
         let config = await Config.loadAppConfig(fs, params?.config);
-
         AppLogger.logInspect('config', config);
 
-        return new DevPress(config, fs);
+        let app = new DevPress(config, fs);
+
+        // TODO: is it possible to load it dynamically? without explicit path?
+        let plugin = require('../plugin/markdown_it_plugin');
+        await plugin.initialize(app);
+
+        return app
     }
 }
 
