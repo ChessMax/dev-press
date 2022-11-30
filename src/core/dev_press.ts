@@ -17,11 +17,11 @@ import {RecursivePartial} from "./recursive_partial";
 import {deepmerge} from "deepmerge-ts";
 import * as util from "util";
 import {AppLogger} from "./app_logger";
+import {PostMeta} from "../post/post_meta";
 
 export interface DevPressParams {
     fs?: FileSystem;
     config?: RecursivePartial<AppConfig>;
-    configName?: string;
 }
 
 export class DevPress {
@@ -265,14 +265,6 @@ export class DevPress {
 
         return new DevPress(config, fs);
     }
-}
-
-interface PostMeta {
-    title: string;
-    created: Date;
-    updated: Date;
-    description?: string;
-    tags?: string[];
 }
 
 // TODO: make plugin?
