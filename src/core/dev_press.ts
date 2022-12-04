@@ -246,6 +246,9 @@ export class DevPress {
             await loadPlugin(pluginName);
         }
 
+        // TODO: loading scripts
+        // TODO: try to load ts scripts?
+
         return app
     }
 }
