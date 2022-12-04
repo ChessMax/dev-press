@@ -1,5 +1,6 @@
 ﻿import {DevPress, StaticFilesRenderer} from "../core/dev_press";
 import path from "path";
+import {PluginConfig} from "./plugin_config";
 
 export function initialize(context: DevPress) {
     let staticFilesRenderer: StaticFilesRenderer = async (outputDir) => {
@@ -20,4 +21,8 @@ export function initialize(context: DevPress) {
             fs.join(outputDir, 'posts', 'step_on_a_rake.png'));
     };
     context.staticFileRenderers.push(staticFilesRenderer);
+}
+
+interface StaticFilesPluginConfig extends PluginConfig {
+    patterns?: string[];
 }

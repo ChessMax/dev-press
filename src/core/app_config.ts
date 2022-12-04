@@ -4,7 +4,6 @@ import {ServerConfig} from "../commands/server_config";
 import {FileName, FilePath, FileSystem} from "../fs/file_system";
 import {RecursivePartial} from "./recursive_partial";
 import {deepmerge} from "deepmerge-ts";
-import {AppLogger} from "./app_logger";
 
 export interface AppConfig {
     site: SiteMeta;

@@ -12,6 +12,8 @@ import {DirectoryPath, FileSystem} from "../fs/file_system";
 import {RecursivePartial} from "./recursive_partial";
 import {AppLogger} from "./app_logger";
 import {PostMeta} from "../post/post_meta";
+import {PluginConfig} from "../plugin/plugin_config";
+import {StringHelpers} from "../string_helpers";
 
 export interface DevPressParams {
     fs?: FileSystem;
@@ -30,6 +32,12 @@ export class DevPress {
     constructor(config: AppConfig, fs: FileSystem) {
         this.fs = fs;
         this.config = config;
+    }
+
+    getConfigByName(name: string): PluginConfig | null {
+        let dynamicConfig = this.config as any;
+        let config = dynamicConfig[name] as PluginConfig;
+        return config;
     }
 
     async render(name: string, content: string, env?: any): Promise<string> {
@@ -233,10 +241,16 @@ export class DevPress {
         let loadPlugin = async (fullName: string): Promise<void> => {
             let name = fs.getBaseName(fullName);
             let nameWithoutExt = name.replace('_plugin.js', '');
+            let camelCaseName = StringHelpers.snakeCaseToCamelCase(nameWithoutExt);
+            let pluginConfig = app.getConfigByName(camelCaseName);
+            if (pluginConfig != null && pluginConfig.enabled == false) {
+                console.log(`Plugin '${nameWithoutExt}' is disabled. Skip loading.`);
+                return;
+            }
             // console.log(`Loading plugin '${nameWithoutExt}'...`);
             let plugin = require(`../plugin/${name}`);
             await plugin.initialize(app);
-            console.log(`Plugin '${nameWithoutExt}' loaded`);
+            console.log(`Plugin '${nameWithoutExt}' loaded.`);
         }
 
         let packageDir = await fs.getPackageDir();
