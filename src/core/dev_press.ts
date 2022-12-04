@@ -5,11 +5,10 @@ import {Site} from "../post/site";
 import {Tag} from "../post/tag";
 import {parseConfig} from "./parse_config";
 import {ConsolidateTemplateEngine} from "../view/consolidate_template_engine";
-import path from "path";
 import {Feed} from "../post/feed";
 import {Template} from "../view/template";
 import {Tags} from "../post/tags";
-import {FileSystem} from "../fs/file_system";
+import {DirectoryPath, FileSystem} from "../fs/file_system";
 import {RecursivePartial} from "./recursive_partial";
 import {AppLogger} from "./app_logger";
 import {PostMeta} from "../post/post_meta";
@@ -20,11 +19,13 @@ export interface DevPressParams {
 }
 
 export type Renderer = (content: string, env?: any) => string | Promise<string>;
+export type StaticFilesRenderer = (outputDir: DirectoryPath) => Promise<void>;
 
 export class DevPress {
     fs: FileSystem;
     config: AppConfig;
     renderers: Record<string, Renderer> = {};
+    staticFileRenderers: StaticFilesRenderer[] = [];
 
     constructor(config: AppConfig, fs: FileSystem) {
         this.fs = fs;
@@ -143,25 +144,10 @@ export class DevPress {
         // TODO: should be generalized?
         posts.sort((a, b) => b.created.getTime() - a.created.getTime());
 
+        await Promise.all<void>(this.staticFileRenderers.map((r) => r(outputDir)));
+
         let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
         await te.initialize();
-
-        // let cssUrl = `${baseUrl}/css/index.css`;
-
-        async function copyCss(from: string): Promise<void> {
-            let name = path.basename(from);
-            await fs.copyFile(from, fs.join(outputDir, 'css', name));
-        }
-
-        await copyCss('./theme/css/index.css');
-        await copyCss('./theme/css/all.min.css');
-        await fs.copyFile('./theme/images/favicon.svg',
-            fs.join(outputDir, 'images', 'favicon.svg'));
-
-        // TODO: fix explicit file copy
-        await fs.copyFile('./source/posts/step_on_a_rake.png',
-            fs.join(outputDir, 'posts', 'step_on_a_rake.png'));
-
         let indexTemplate = await te.getTemplate<Site>('index');
         let html = await indexTemplate.render(site);
         let htmlPath = fs.join(outputDir, 'index.html');
@@ -244,9 +230,13 @@ export class DevPress {
 
         let app = new DevPress(config, fs);
 
+        let loadPlugin = async (name: string):Promise<void> => {
+            let plugin = require(`../plugin/${name}`);
+            await plugin.initialize(app);
+        }
         // TODO: is it possible to load it dynamically? without explicit path?
-        let plugin = require('../plugin/markdown_it_plugin');
-        await plugin.initialize(app);
+        await loadPlugin('markdown_it_plugin');
+        await loadPlugin('static_files_plugin');
 
         return app
     }
