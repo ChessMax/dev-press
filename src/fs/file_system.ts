@@ -8,7 +8,7 @@ export interface FileSystem {
 
     isAbsolute(path: FilePath): boolean;
 
-    getCurrentWorkingDir(): DirectoryPath;
+    getCurrentWorkingDir(subDir?: DirectoryPath): DirectoryPath;
 
     join(...paths: string[]): FilePath;
 

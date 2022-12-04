@@ -1,25 +1,41 @@
-﻿import {DevPress, StaticFilesRenderer} from "../core/dev_press";
-import path from "path";
-import {PluginConfig} from "./plugin_config";
+﻿import {PluginConfig} from "./plugin_config";
+import {DirectoryPath} from "../fs/file_system";
+import {DevPress, StaticFilesRenderer} from "../core/dev_press";
 
 export function initialize(context: DevPress) {
     let staticFilesRenderer: StaticFilesRenderer = async (outputDir) => {
-        // let cssUrl = `${baseUrl}/css/index.css`;
+
+        // TODO: provide plugin name somehow?
         let fs = context.fs;
-        async function copyCss(from: string): Promise<void> {
-            let name = path.basename(from);
-            await fs.copyFile(from, fs.join(outputDir, 'css', name));
+        let config = context.config;
+        let pluginConfig = context.getConfigByName('staticFiles') as StaticFilesPluginConfig;
+        let patterns = pluginConfig?.patterns;
+        if (patterns == null) return;
+
+        let themeDir = config.theme;
+        let sourceDir = config.source;
+
+        // TODO: could it be done better?
+        let getFiles = async (dir: DirectoryPath, patterns: string[]):Promise<void> => {
+            let files: Set<string> = new Set<string>();
+
+            for (let pattern of patterns) {
+                let filesByPattern = await fs.getGlob(pattern, {cwd: dir});
+                filesByPattern.forEach(files.add, files);
+            }
+
+            for (let file of files) {
+                await fs.copyFile(
+                    fs.join(dir, file),
+                    fs.join(outputDir, file)
+                );
+            }
         }
 
-        await copyCss('./theme/css/index.css');
-        await copyCss('./theme/css/all.min.css');
-        await fs.copyFile('./theme/images/favicon.svg',
-            fs.join(outputDir, 'images', 'favicon.svg'));
-
-        // TODO: fix explicit file copy
-        await fs.copyFile('./source/posts/step_on_a_rake.png',
-            fs.join(outputDir, 'posts', 'step_on_a_rake.png'));
+        await getFiles(sourceDir, patterns);
+        await getFiles(themeDir, patterns);
     };
+
     context.staticFileRenderers.push(staticFilesRenderer);
 }
 

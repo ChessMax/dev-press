@@ -1,14 +1,16 @@
 ﻿import {AuthorMeta, SiteMeta} from "../post/post";
 import {ViewEngineConfig} from "../view/view_engine_config";
 import {ServerConfig} from "../commands/server_config";
-import {FileName, FilePath, FileSystem} from "../fs/file_system";
+import {DirectoryPath, FileName, FilePath, FileSystem} from "../fs/file_system";
 import {RecursivePartial} from "./recursive_partial";
 import {deepmerge} from "deepmerge-ts";
 
 export interface AppConfig {
     site: SiteMeta;
     author: AuthorMeta;
-    output: string;
+    theme: DirectoryPath;
+    output: DirectoryPath;
+    source: DirectoryPath;
     server: ServerConfig;
     viewEngine: ViewEngineConfig;
 }

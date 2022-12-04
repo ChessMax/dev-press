@@ -19,8 +19,13 @@ export class AppFileSystem implements FileSystem {
         return _path.isAbsolute(path);
     }
 
-    getCurrentWorkingDir(): string {
-        return process.cwd();
+    getCurrentWorkingDir(subDir?: DirectoryPath): string {
+        let cwd = process.cwd();
+        if (subDir != null) {
+            cwd = path.join(cwd, subDir);
+        }
+
+        return cwd;
     }
 
     getPackageDir(): DirectoryPath {

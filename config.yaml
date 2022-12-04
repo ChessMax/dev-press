@@ -1,4 +1,6 @@
-﻿output: ./public
+﻿theme: ./theme
+source: ./source/
+output: ./public
 viewEngine:
   name: vash
   views: ./theme
@@ -9,3 +11,7 @@ server:
   webSocketPort: 9000
   hotReload: true
 staticFiles:
+  patterns:
+    - '**/*.css'
+    - '**/*.svg'
+    - '**/*.png'
