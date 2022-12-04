@@ -32,7 +32,7 @@ export class DevPress {
         this.config = config;
     }
 
-    async render(name: string, content: string, env?: any):Promise<string> {
+    async render(name: string, content: string, env?: any): Promise<string> {
         let renderer = this.renderers[name];
         let result = await renderer(content, env);
         return result;
@@ -230,13 +230,21 @@ export class DevPress {
 
         let app = new DevPress(config, fs);
 
-        let loadPlugin = async (name: string):Promise<void> => {
+        let loadPlugin = async (fullName: string): Promise<void> => {
+            let name = fs.getBaseName(fullName);
+            let nameWithoutExt = name.replace('_plugin.js', '');
+            // console.log(`Loading plugin '${nameWithoutExt}'...`);
             let plugin = require(`../plugin/${name}`);
             await plugin.initialize(app);
+            console.log(`Plugin '${nameWithoutExt}' loaded`);
         }
-        // TODO: is it possible to load it dynamically? without explicit path?
-        await loadPlugin('markdown_it_plugin');
-        await loadPlugin('static_files_plugin');
+
+        let packageDir = await fs.getPackageDir();
+        let plugins = await fs.getGlob('./lib/src/plugin/*_plugin.js', {cwd: packageDir});
+
+        for (let pluginName of plugins) {
+            await loadPlugin(pluginName);
+        }
 
         return app
     }

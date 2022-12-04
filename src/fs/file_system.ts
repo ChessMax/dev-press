@@ -14,7 +14,7 @@ export interface FileSystem {
 
     getBaseName(path: FilePath, ext?: FileExt): FileName;
 
-    getGlob(pattern: string): Promise<FilePath[]>;
+    getGlob(pattern: string, options?: {cwd?: string}): Promise<FilePath[]>;
 
     getPackageDir(): DirectoryPath;
 

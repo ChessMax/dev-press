@@ -30,8 +30,8 @@ export class AppFileSystem implements FileSystem {
         return packageDir;
     }
 
-    getGlob(pattern: string): Promise<FilePath[]> {
-        return Promise.resolve(glob.sync(pattern));
+    getGlob(pattern: string, options?: {cwd?: string}): Promise<FilePath[]> {
+        return Promise.resolve(glob.sync(pattern, options));
     }
 
     async readTextFile(path: FilePath): Promise<string> {
