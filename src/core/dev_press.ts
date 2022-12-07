@@ -22,12 +22,14 @@ export interface DevPressParams {
 
 export type Renderer = (content: string, env?: any) => string | Promise<string>;
 export type StaticFilesRenderer = (outputDir: DirectoryPath) => Promise<void>;
+export type BeforeRenderer = (value: Post | Site) => void | Promise<void>;
 
 export class DevPress {
     fs: FileSystem;
     config: AppConfig;
     renderers: Record<string, Renderer> = {};
     staticFileRenderers: StaticFilesRenderer[] = [];
+    beforeRenderers: BeforeRenderer[] = [];
 
     constructor(config: AppConfig, fs: FileSystem) {
         this.fs = fs;
@@ -38,6 +40,12 @@ export class DevPress {
         let dynamicConfig = this.config as any;
         let config = dynamicConfig[name] as PluginConfig;
         return config;
+    }
+
+    async invokeBeforeRender(value: Post | Site):Promise<void> {
+        for (let renderer of this.beforeRenderers) {
+            await renderer(value);
+        }
     }
 
     async render(name: string, content: string, env?: any): Promise<string> {
@@ -73,6 +81,7 @@ export class DevPress {
             author: author,
             baseUrl: baseUrl,
             urlBuilder: urlBuilder,
+            bodyEnd: [],
         };
 
         let tagsMap = {} as Record<string, Tag>;
@@ -118,6 +127,7 @@ export class DevPress {
                 updated: postMeta.updated,
                 // tags: postTags,
                 urlBuilder: urlBuilder,
+                bodyEnd: [],
             };
             posts.push(post);
 
@@ -156,6 +166,7 @@ export class DevPress {
 
         let te = new ConsolidateTemplateEngine(fs, config.viewEngine);
         await te.initialize();
+        await this.invokeBeforeRender(site);
         let indexTemplate = await te.getTemplate<Site>('index');
         let html = await indexTemplate.render(site);
         let htmlPath = fs.join(outputDir, 'index.html');
@@ -164,6 +175,8 @@ export class DevPress {
         let postTemplate = await te.getTemplate<Post>('post');
 
         for (let post of posts) {
+            await this.invokeBeforeRender(post);
+
             let postHtml = await postTemplate.render(post);
             let postPath = fs.join(outputDir, `${post.path}.html`);
             await fs.writeTextFile(postPath, postHtml);

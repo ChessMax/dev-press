@@ -31,4 +31,5 @@ export interface Post {
     description?: string;
     tags?: Tag[];
     urlBuilder: UrlBuilder;
+    bodyEnd: string[];
 }

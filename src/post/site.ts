@@ -9,4 +9,5 @@ export interface Site {
     description?: string;
     urlBuilder: UrlBuilder;
     baseUrl?: string;
+    bodyEnd: string[];
 }

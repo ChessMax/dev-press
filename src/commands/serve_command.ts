@@ -1,5 +1,4 @@
 ﻿import e from "express";
-import {buildCommand} from "./build_command";
 import {watch} from "chokidar";
 import {WebSocket} from "ws";
 import {AppFileSystem} from "../fs/app_file_system";
@@ -13,13 +12,35 @@ export async function serveCommand(): Promise<void> {
     let port = serverConfig.port;
 
     let baseUrl = `http://localhost:${port}`;
-    let app = await DevPress.initialize({
-        config: {
-            site: {
-                url: baseUrl,
-            },
-        }
-    });
+
+    async function initialize():Promise<DevPress> {
+        let app = await DevPress.initialize({
+            config: {
+                site: {
+                    url: baseUrl,
+                },
+            }
+        });
+        app.beforeRenderers.push((post) => {
+            post.bodyEnd.push(
+                '<script>\n' +
+                '    (function() {\n' +
+                `        let ws = new WebSocket(\'ws://localhost:${port}\');\n` +
+                '        ws.onmessage = function (msg) {\n' +
+                '            if (msg.data === \'reload\') {\n' +
+                '                console.log(\'reloading\');\n' +
+                '                window.location.reload();\n' +
+                '            }\n' +
+                '        };\n' +
+                '    })();\n' +
+                '</script>'
+            );
+        });
+        return app;
+    }
+
+
+    let app = await initialize();
     await app.build();
 
     let clients = new Array<WebSocket>();
@@ -51,14 +72,7 @@ export async function serveCommand(): Promise<void> {
             building = true;
             console.log(`Something changed: ${event} ${path}`);
 
-            let app = await DevPress.initialize({
-                    config: {
-                        site: {
-                            url: baseUrl,
-                        },
-                    }
-                }
-            );
+            let app = await initialize();
             await app.build();
 
             console.log('rebuild completed');
