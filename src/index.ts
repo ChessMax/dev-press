@@ -2,6 +2,8 @@
 
 import {buildCommand} from "./commands/build_command";
 import {serveCommand} from "./commands/serve_command";
+import {deployCommand} from "./commands/deploy_command";
+import {dump} from "js-yaml";
 
 const {Command} = require('commander');
 
@@ -22,7 +24,20 @@ program
         await serveCommand();
     });
 
+program
+    .command('deploy')
+    .description('Build and deploy site')
+    .option('--dry', 'Run in dry mode')
+    .action(async (args: { dry?: boolean }) => {
+        await deployCommand({
+            dry: args.dry,
+        });
+    });
+
 let argv = process.argv;
 console.log(`argv: ${argv}`);
 
 program.parse();
+
+let options = program.opts();
+dump(options);
