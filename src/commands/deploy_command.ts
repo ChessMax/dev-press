@@ -7,6 +7,11 @@ export async function deployCommand(params: {dry?:boolean}): Promise<void> {
     let app = await DevPress.initialize({fs: fs});
     await app.build();
 
+    let content = fs.filesWritten.join('\n');
 
+    console.log(`Written files [${fs.filesWritten.length}]:`);
+    console.log(content);
+
+    await fs.writeTextFile(fs.join(app.config.output, '.deploy'), content);
 }
 

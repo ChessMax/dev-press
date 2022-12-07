@@ -38,6 +38,3 @@ let argv = process.argv;
 console.log(`argv: ${argv}`);
 
 program.parse();
-
-let options = program.opts();
-dump(options);
