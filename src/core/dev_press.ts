@@ -93,7 +93,7 @@ export class DevPress {
             console.log(`md: ${md}`);
 
             let content = await fs.readTextFile(md);
-            let body = await this.render('markdown', content, mdiEnv);
+            let body = await this.render('markdown', content!, mdiEnv);
             let postMeta = await parseConfig<PostMeta>(mdiEnv.fm);
 
             let r = replaceMore(body);
@@ -247,7 +247,7 @@ export class DevPress {
     static async initialize(params?: DevPressParams): Promise<DevPress> {
         let fs = params?.fs ?? new AppFileSystem();
         let config = await Config.loadAppConfig(fs, params?.config);
-        AppLogger.logInspect('config', config);
+        // AppLogger.logInspect('config', config);
 
         let app = new DevPress(config, fs);
 

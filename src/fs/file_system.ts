@@ -18,7 +18,7 @@ export interface FileSystem {
 
     getPackageDir(): DirectoryPath;
 
-    readTextFile(path: FilePath): Promise<string>;
+    readTextFile(path: FilePath): Promise<string | null>;
 
     makeDirRecursive(dir: DirectoryPath): Promise<void>;
 

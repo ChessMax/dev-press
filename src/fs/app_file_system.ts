@@ -11,7 +11,7 @@ export class AppFileSystem implements FileSystem {
 
     async loadConfig<T>(path: FilePath, defaultConfig?: Partial<T>): Promise<T> {
         let content = await this.readTextFile(path);
-        let config = await parseConfig<T>(content, defaultConfig);
+        let config = await parseConfig<T>(content!, defaultConfig);
         return config;
     }
 
@@ -39,8 +39,13 @@ export class AppFileSystem implements FileSystem {
         return Promise.resolve(glob.sync(pattern, options));
     }
 
-    async readTextFile(path: FilePath): Promise<string> {
-        return await fse.readFile(path, this.encoding);
+    async readTextFile(path: FilePath): Promise<string | null> {
+        try {
+            return await fse.readFile(path, this.encoding);
+        }
+        catch (e) {
+            return null;
+        }
     }
 
     async removeDirRecursive(dir: DirectoryPath): Promise<void> {

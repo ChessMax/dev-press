@@ -49,7 +49,7 @@ export class DeployFileSystem implements FileSystem {
         return this.fs.makeDirRecursive(dir);
     }
 
-    readTextFile(path: FilePath): Promise<string> {
+    readTextFile(path: FilePath): Promise<string | null> {
         return this.fs.readTextFile(path);
     }
 
