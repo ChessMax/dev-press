@@ -20,7 +20,10 @@ export interface DevPressParams {
     config?: RecursivePartial<AppConfig>;
 }
 
-export type Renderer = (content: string, env?: any) => string | Promise<string>;
+export type RenderResult = [content: string, meta: string];
+
+export type Renderer = (content: string, env?: any) =>
+    RenderResult | Promise<RenderResult>;
 export type StaticFilesRenderer = (outputDir: DirectoryPath) => Promise<void>;
 export type BeforeRenderer = (value: Post | Site) => void | Promise<void>;
 
@@ -48,7 +51,7 @@ export class DevPress {
         }
     }
 
-    async render(name: string, content: string, env?: any): Promise<string> {
+    async render(name: string, content: string, env?: any): Promise<RenderResult> {
         let renderer = this.renderers[name];
         let result = await renderer(content, env);
         return result;
@@ -88,13 +91,12 @@ export class DevPress {
 
         let outputDir = config.output;
         let mds = await fs.getGlob('./source/posts/*.md');
-        let mdiEnv = {fm: ''};
         for (const md of mds) {
             console.log(`md: ${md}`);
 
             let content = await fs.readTextFile(md);
-            let body = await this.render('markdown', content!, mdiEnv);
-            let postMeta = await parseConfig<PostMeta>(mdiEnv.fm);
+            let [body, meta] = await this.render('markdown', content!);
+            let postMeta = await parseConfig<PostMeta>(meta);
 
             if (postMeta.created == null) {
                 postMeta.created = getGitCreatedTime(md);

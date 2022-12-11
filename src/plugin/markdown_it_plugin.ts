@@ -3,13 +3,13 @@ import MarkdownIt from "markdown-it";
 import MarkdownItFrontMatter from "markdown-it-front-matter";
 import MarkdownItShiki from "markdown-it-shiki";
 
+let meta: string = '';
 export function initialize(context: DevPress): void {
-    let fm: string = '';
     let mdi: MarkdownIt;
     mdi = MarkdownIt({
         html: true,
     }).use(MarkdownItFrontMatter, function (value) {
-        fm = value;
+        meta = value;
     }).use(MarkdownItShiki, {
         theme: 'github-light'
     });
@@ -31,11 +31,8 @@ export function initialize(context: DevPress): void {
     };
 
     context.renderers['markdown'] = (content: string, env?: any) => {
+        meta = '';
         let body = mdi.render(content);
-        if (env != null) {
-            // TODO: looks ugly
-            env['fm'] = fm;
-        }
-        return body;
+        return [body, meta];
     };
 }
