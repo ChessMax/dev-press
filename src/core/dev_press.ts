@@ -10,10 +10,10 @@ import {Template} from "../view/template";
 import {Tags} from "../post/tags";
 import {DirectoryPath, FileSystem} from "../fs/file_system";
 import {RecursivePartial} from "./recursive_partial";
-import {AppLogger} from "./app_logger";
 import {PostMeta} from "../post/post_meta";
 import {PluginConfig} from "../plugin/plugin_config";
 import {StringHelpers} from "../string_helpers";
+import {getGitCreatedTime, getGitLastUpdatedTime} from "./helpers/git_time";
 
 export interface DevPressParams {
     fs?: FileSystem;
@@ -96,6 +96,14 @@ export class DevPress {
             let body = await this.render('markdown', content!, mdiEnv);
             let postMeta = await parseConfig<PostMeta>(mdiEnv.fm);
 
+            if (postMeta.created == null) {
+                postMeta.created = getGitCreatedTime(md);
+            }
+
+            if (postMeta.updated == null) {
+                postMeta.updated = getGitLastUpdatedTime(md);
+            }
+
             let r = replaceMore(body);
             let intro = r.intro;
             body = r.content;
@@ -122,9 +130,8 @@ export class DevPress {
                 intro: intro,
                 content: body,
                 description: postMeta.description,
-                // TODO: adjust time
-                created: postMeta.created,
-                updated: postMeta.updated,
+                created: postMeta.created ?? new Date(),
+                updated: postMeta.updated ?? new Date(),
                 // tags: postTags,
                 urlBuilder: urlBuilder,
                 bodyEnd: [],
