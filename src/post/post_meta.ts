@@ -4,4 +4,5 @@
     updated: Date | null;
     description?: string;
     tags?: string[];
+    hidden?: boolean;
 }

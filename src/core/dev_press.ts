@@ -98,6 +98,10 @@ export class DevPress {
             let [body, meta] = await this.render('markdown', content!);
             let postMeta = await parseConfig<PostMeta>(meta);
 
+            if (postMeta.hidden == true) {
+                continue;
+            }
+
             if (postMeta.created == null) {
                 postMeta.created = getGitCreatedTime(md);
             }
