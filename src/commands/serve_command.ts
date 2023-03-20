@@ -64,9 +64,10 @@ export async function serveCommand(): Promise<void> {
     let building = false;
 
     let watcher = watch('.', {
+        atomic: true,
         persistent: true,
         ignoreInitial: true,
-        ignored: ['.*', './public', './node_modules'],
+        ignored: ['**/**.*~', '.*', './public', './node_modules'],
     }).on('all', async (event, path) => {
         if (!building) {
             building = true;
