@@ -308,6 +308,13 @@ function replaceMore(content: string): {
         });
     }
 
+    // TODO: need generic fix
+    const imgTag = /<img src=".+?"/i;
+    intro = intro.replace(imgTag, (match, index) => {
+        let url = match.replace('\./', './posts/');
+        return url;
+    });
+
     return {
         intro: intro,
         content: content,
