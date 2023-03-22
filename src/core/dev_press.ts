@@ -197,6 +197,7 @@ export class DevPress {
         }
 
         // TODO: move to its own plugin?
+        let xmlEscape = require('xml-escape');
         let feedTemplate = await te.getTemplate<Feed>('feed');
         let feedHtml = await feedTemplate.render({
             title: site.title,
@@ -215,6 +216,7 @@ export class DevPress {
                     published: post.created,
                     updated: post.updated ?? new Date(),
                     summary: summary,
+                    content: xmlEscape(post.content),
                     categories: tags ? tags.map((tag) => {
                         return {
                             term: tag.name,

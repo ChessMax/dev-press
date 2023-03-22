@@ -34,9 +34,11 @@
     "markdown-it-front-matter": "^0.2.3",
     "string-strip-html": "^8.4.0",
     "vash": "^0.13.0",
-    "ws": "^8.9.0"
+    "ws": "^8.9.0",
+    "xml-escape": "^1.1.0"
   },
   "devDependencies": {
+    "@types/xml-escape": "^1.1.1",
     "@types/consolidate": "^0.14.1",
     "@types/cross-spawn": "^6.0.2",
     "@types/express": "^4.17.14",

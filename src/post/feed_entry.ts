@@ -5,5 +5,6 @@
     published: Date;
     updated: Date;
     summary: string;
+    content: string;
     categories: FeedCategory[];
 }
