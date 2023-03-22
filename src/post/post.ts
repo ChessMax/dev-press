@@ -2,7 +2,7 @@
 import {Tag} from "./tag";
 
 type Url = string;
-type Html = String;
+type Html = string;
 
 export interface SiteMeta {
     lang: string;

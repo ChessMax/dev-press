@@ -45,7 +45,7 @@ export class DevPress {
         return config;
     }
 
-    async invokeBeforeRender(value: Post | Site):Promise<void> {
+    async invokeBeforeRender(value: Post | Site): Promise<void> {
         for (let renderer of this.beforeRenderers) {
             await renderer(value);
         }
@@ -199,14 +199,14 @@ export class DevPress {
         let feedTemplate = await te.getTemplate<Feed>('feed');
         let feedHtml = await feedTemplate.render({
             title: site.title,
-            selfLink: `${baseUrl}/atom.xml`,
+            selfLink: new URL('atom.xml', baseUrl).toString(),
             link: baseUrl,
             updated: new Date(),
-            id: baseUrl,
+            id: new URL(baseUrl).toString(),
             author: site.author,
             entries: posts.map((post) => {
                 let tags = post.tags;
-                let summary = (post.intro || post.content).substring(0, 140);
+                let summary = post.intro || post.content.substring(0, 140);
                 return {
                     title: post.title,
                     link: post.url,
