@@ -14,6 +14,7 @@ import {PostMeta} from "../post/post_meta";
 import {PluginConfig} from "../plugin/plugin_config";
 import {StringHelpers} from "../string_helpers";
 import {getGitCreatedTime, getGitLastUpdatedTime} from "./helpers/git_time";
+import {stripHtml} from "string-strip-html";
 
 export interface DevPressParams {
     fs?: FileSystem;
@@ -206,7 +207,7 @@ export class DevPress {
             author: site.author,
             entries: posts.map((post) => {
                 let tags = post.tags;
-                let summary = post.intro || post.content.substring(0, 140);
+                let summary = stripHtml(post.intro || post.content).result.substring(0, 500);
                 return {
                     title: post.title,
                     link: post.url,
